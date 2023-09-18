@@ -8,8 +8,9 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
-dist-ssr
+# I commented out the following 2 lines so i can reach those dirs in GitHub.
+# dist
+# dist-ssr
 *.local
 
 # Editor directories and files
