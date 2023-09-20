@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { FaTwitter, FaXTwitter  } from "react-icons/fa6";
+import { FaTwitter, FaXTwitter } from "react-icons/fa6";
 
 export class TwitterButton extends React.Component {
   constructor(props) {
@@ -8,28 +8,21 @@ export class TwitterButton extends React.Component {
   }
 
   render() {
+    const encodedQuote = encodeURI(this.props.quoteText);
     return (
       <button
         type="button"
-        className={"btn btn-outline-" + this.props.color}
-        onMouseOver={() =>
-          document.getElementById("tweet-quote").classList.add("text-dark")
-        }
-        onMouseOut={() =>
-          document.getElementById("tweet-quote").classList.remove("text-dark")
-        }
+        className={"btn btn-" + this.props.color + " btn-lg rounded-1"}
       >
         <a
           id="tweet-quote"
-          href="#"
+          href={
+            "https://twitter.com/intent/tweet?hashtags=quotes&text=" +
+            encodedQuote
+          }
           target="_blank"
-          className={"text-decoration-none text-" + this.props.color}
-          onMouseOver={() =>
-            document.getElementById("tweet-quote").classList.add("text-dark")
-          }
-          onMouseOut={() =>
-            document.getElementById("tweet-quote").classList.remove("text-dark")
-          }
+          rel="noreferrer"
+          className="text-decoration-none link-light"
         >
           <FaTwitter />
           &nbsp;|&nbsp;
@@ -43,6 +36,7 @@ export class TwitterButton extends React.Component {
 
 TwitterButton.propTypes = {
   color: PropTypes.string.isRequired,
+  quoteText: PropTypes.string.isRequired,
 };
 
 export default TwitterButton;

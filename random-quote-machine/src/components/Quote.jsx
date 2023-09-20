@@ -1,49 +1,83 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import TwitterButton from "./TwitterButton";
+import { FaQuoteLeft } from "react-icons/fa6";
 
 export class Quote extends React.Component {
   constructor(props) {
     super(props);
+    this.LOCAL_QUOTES_KEY = "quotes";
     this.state = {
-      counter: 1,
       quote: {
-        text: "Test Quote",
-        author: "Unknown",
+        text: "",
+        author: "",
       },
     };
-    this.fetchNewQuote = this.fetchNewQuote.bind(this);
+    this.getNewQuote = this.getNewQuote.bind(this);
   }
 
-  fetchNewQuote() {
-    this.setState((state, props) => {
-      props.changeColor();
-      return {
-        counter: state.counter + 1,
-      };
-    });
+  async fetchNewQuotesJSON() {
+    try {
+      const response = await fetch("https://api.quotable.io/random");
+      if (response.ok) {
+        const quote = await response.json();
+        this.setState({ quote: { text: quote.content, author: quote.author } });
+      } else {
+        return null;
+      }
+    } catch (e) {
+      console.log(e.message.toString());
+      return null;
+    }
+  }
+
+  getNewQuote() {
+    setTimeout(() => {
+      this.props.changeColor();
+      this.fetchNewQuotesJSON();
+    }, 500);
+  }
+
+  componentDidMount() {
+    this.getNewQuote();
   }
 
   render() {
     return (
       <Fragment>
-        <div>
-          <h1 className={"text-" + this.props.color} id="text">
-            {this.state.quote.text + " " + this.state.counter}
+        {this.state.quote.text ? (
+          <div>
+            <h1
+              className={"p-0 text-center text-" + this.props.color}
+              id="text"
+            >
+              <FaQuoteLeft
+                style={{ fontSize: "2rem" }}
+                className="me-2 align-top"
+              />
+              {this.state.quote.text}
+            </h1>
+            <p className={"my-3 text-end text-" + this.props.color} id="author">
+              - {this.state.quote.author}
+            </p>
+          </div>
+        ) : (
+          <h1 className={"mb-5 text-center text-" + this.props.color} id="text">
+            <FaQuoteLeft style={{ fontSize: "3rem" }} />
           </h1>
-          <p className={"text-center mt-5 text-" + this.props.color} id="author">
-            By {this.state.quote.author + "_" + this.state.counter}
-          </p>
-        </div>
-        <div className="d-flex justify-content-around align-items-end">
-          <TwitterButton color={this.props.color} />
+        )}
+        <div className="d-flex justify-content-between align-items-end">
+          <TwitterButton
+            color={this.props.color}
+            quoteText={`"${this.state.quote.text}"\n\n- ${this.state.quote.author}\n\n`}
+          />
           <button
             type="button"
             id="new-quote"
-            className={"btn btn-outline-" + this.props.color}
-            onClick={this.fetchNewQuote}
-            onMouseOver={(e) => e.target.classList.add("text-dark")}
-            onMouseOut={(e) => e.target.classList.remove("text-dark")}
+            className={
+              "btn btn-" + this.props.color + " btn-lg rounded-1 text-light"
+            }
+            onClick={this.getNewQuote}
           >
             New quote
           </button>
