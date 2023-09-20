@@ -6,13 +6,21 @@ export class TwitterButton extends React.Component {
   constructor(props) {
     super(props);
   }
-
+  // TODO: Try Ref instead of 'document.getElementByID'
   render() {
     const encodedQuote = encodeURI(this.props.quoteText);
     return (
       <button
+        id="tweet-btn"
         type="button"
-        className={"btn btn-" + this.props.color + " btn-lg rounded-1"}
+        onMouseOver={() =>
+          (document.getElementById("tweet-btn").style.opacity = 0.75)
+        }
+        onMouseLeave={() =>
+          (document.getElementById("tweet-btn").style.opacity = 1)
+        }
+        style={{ transition: "background-color 3s, border-color 3s" }}
+        className={"mt-3 btn btn-" + this.props.color + " btn-sm-lg rounded-1"}
       >
         <a
           id="tweet-quote"

@@ -16,7 +16,3 @@ body {
   padding: 0;
   min-height: 100vh;
 }
-
-* {
-  transition: color 2s, background-color 2s, width 2s, height 2s, box-size 2s, margin 2s, padding 2s;
-}

@@ -47,26 +47,31 @@ export class Quote extends React.Component {
       <Fragment>
         {this.state.quote.text ? (
           <div>
-            <h1
-              className={"p-0 text-center text-" + this.props.color}
+            <h2
+              className={"p-0 text-start text-sm-center text-" + this.props.color}
               id="text"
+              style={{ transition: "color 3s" }}
             >
               <FaQuoteLeft
-                style={{ fontSize: "2rem" }}
-                className="me-2 align-top"
+                className="me-2 align-text-bottom"
+                style={{ fontSize: "2.2rem" }}
               />
-              {this.state.quote.text}
-            </h1>
-            <p className={"my-3 text-end text-" + this.props.color} id="author">
+              <span className="align-bottom">{this.state.quote.text}</span>
+            </h2>
+            <p
+              style={{ transition: "color 3s" }}
+              className={"my-3 text-end text-" + this.props.color}
+              id="author"
+            >
               - {this.state.quote.author}
             </p>
           </div>
         ) : (
-          <h1 className={"mb-5 text-center text-" + this.props.color} id="text">
-            <FaQuoteLeft style={{ fontSize: "3rem" }} />
-          </h1>
+          <h2 className={"mb-5 text-center text-" + this.props.color} id="text">
+            <FaQuoteLeft style={{ fontSize: "5rem", transition: "color 3s" }} />
+          </h2>
         )}
-        <div className="d-flex justify-content-between align-items-end">
+        <div className="d-flex flex-column flex-sm-row justify-content-between align-items-end">
           <TwitterButton
             color={this.props.color}
             quoteText={`"${this.state.quote.text}"\n\n- ${this.state.quote.author}\n\n`}
@@ -75,9 +80,14 @@ export class Quote extends React.Component {
             type="button"
             id="new-quote"
             className={
-              "btn btn-" + this.props.color + " btn-lg rounded-1 text-light"
+              "mt-3 btn btn-" +
+              this.props.color +
+              " btn-lg rounded-1 text-light"
             }
             onClick={this.getNewQuote}
+            onMouseOver={(e) => e.target.style.opacity = 0.75}
+            onMouseLeave={(e) => e.target.style.opacity = 1}
+            style={{ transition: "background-color 3s, border-color 3s" }}
           >
             New quote
           </button>
