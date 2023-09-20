@@ -1,18 +1,12 @@
 import React from "react";
+import { COLORS } from "./colors";
 import Quote from "./components/Quote";
 
 export class App extends React.Component {
   constructor(props) {
     super(props);
     // Bootstrap color classes
-    this.colors = [
-      "secondary",
-      "danger",
-      "warning",
-      "success",
-      "primary",
-      "info",
-    ];
+    this.colors = [...COLORS];
     // Initiate the local state
     this.state = {
       counter: 1,
@@ -30,7 +24,7 @@ export class App extends React.Component {
     let randomNumber;
     let newColor;
     do {
-      randomNumber = Math.floor(Math.random() * 10);
+      randomNumber = Math.floor(Math.random() * this.colors.length);
       newColor = this.colors[randomNumber % this.colors.length];
     } while (newColor == this.state.color);
     this.setState({ color: newColor });

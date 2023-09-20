@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { FaTwitter, FaXTwitter  } from "react-icons/fa6";
 
 export class TwitterButton extends React.Component {
   constructor(props) {
@@ -30,10 +31,10 @@ export class TwitterButton extends React.Component {
             document.getElementById("tweet-quote").classList.remove("text-dark")
           }
         >
-          <i className="bi bi-twitter"></i>
+          <FaTwitter />
           &nbsp;|&nbsp;
           <span className="visually-hidden">Tweet this quote</span>
-          <i className="bi bi-twitter-x"></i>
+          <FaXTwitter />
         </a>
       </button>
     );
