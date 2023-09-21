@@ -1,12 +1,17 @@
-import React, { Fragment } from "react";
+import { Component, Fragment, createRef } from "react";
 import PropTypes from "prop-types";
 import TwitterButton from "./TwitterButton";
 import { FaQuoteLeft } from "react-icons/fa6";
+import { FALLBACK_QUOTES } from "../fallbackQuotes";
+import { fadeIn } from "../fadeInOut";
 
-export class Quote extends React.Component {
+export class Quote extends Component {
   constructor(props) {
     super(props);
-    this.LOCAL_QUOTES_KEY = "quotes";
+    this.fallbackQuotes = FALLBACK_QUOTES;
+    this.quoteDiv = createRef();
+    this.quoteIcon = createRef();
+    this.newQuoteBtn = createRef();
     this.state = {
       quote: {
         text: "",
@@ -14,6 +19,12 @@ export class Quote extends React.Component {
       },
     };
     this.getNewQuote = this.getNewQuote.bind(this);
+    this.setQuoteFromFallback = this.setQuoteFromFallback.bind(this);
+  }
+
+  setQuoteFromFallback() {
+    const randomIndex = Math.floor(Math.random() * this.fallbackQuotes.length);
+    this.setState({ quote: this.fallbackQuotes[randomIndex] });
   }
 
   async fetchNewQuotesJSON() {
@@ -23,34 +34,46 @@ export class Quote extends React.Component {
         const quote = await response.json();
         this.setState({ quote: { text: quote.content, author: quote.author } });
       } else {
-        return null;
+        this.setQuoteFromFallback();
       }
     } catch (e) {
       console.log(e.message.toString());
-      return null;
+      this.setQuoteFromFallback();
     }
   }
 
   getNewQuote() {
+    this.setState({ quote: { text: "", author: "" } });
     setTimeout(() => {
       this.props.changeColor();
       this.fetchNewQuotesJSON();
-    }, 500);
+    }, 1000);
   }
 
   componentDidMount() {
     this.getNewQuote();
   }
 
+  componentDidUpdate() {
+    if (this.quoteDiv.current) {
+      fadeIn(this.quoteDiv.current, 5);
+      this.quoteDiv.current = null;
+    }
+    if (this.quoteIcon.current) {
+      fadeIn(this.quoteIcon.current, 5);
+      this.quoteIcon.current = null;
+    }
+  }
+
   render() {
     return (
       <Fragment>
         {this.state.quote.text ? (
-          <div>
+          <div ref={this.quoteDiv}>
             <h2
-              className={"p-0 text-start text-sm-center text-" + this.props.color}
+              className="p-0 text-start text-sm-center"
               id="text"
-              style={{ transition: "color 3s" }}
+              style={{ transition: "color 3s", color: this.props.color }}
             >
               <FaQuoteLeft
                 className="me-2 align-text-bottom"
@@ -59,16 +82,22 @@ export class Quote extends React.Component {
               <span className="align-bottom">{this.state.quote.text}</span>
             </h2>
             <p
-              style={{ transition: "color 3s" }}
-              className={"my-3 text-end text-" + this.props.color}
+              style={{ transition: "color 3s", color: this.props.color }}
+              className="my-3 text-end"
               id="author"
             >
               - {this.state.quote.author}
             </p>
           </div>
         ) : (
-          <h2 className={"mb-5 text-center text-" + this.props.color} id="text">
-            <FaQuoteLeft style={{ fontSize: "5rem", transition: "color 3s" }} />
+          <h2 ref={this.quoteIcon} className="mb-5 text-center" id="text">
+            <FaQuoteLeft
+              style={{
+                fontSize: "5rem",
+                transition: "color 3s",
+                color: this.props.color,
+              }}
+            />
           </h2>
         )}
         <div className="d-flex flex-column flex-sm-row justify-content-between align-items-end">
@@ -79,15 +108,15 @@ export class Quote extends React.Component {
           <button
             type="button"
             id="new-quote"
-            className={
-              "mt-3 btn btn-" +
-              this.props.color +
-              " btn-lg rounded-1 text-light"
-            }
+            ref={this.newQuoteBtn}
+            className="mt-3 btn btn-lg rounded-1 text-light"
             onClick={this.getNewQuote}
-            onMouseOver={(e) => e.target.style.opacity = 0.75}
-            onMouseLeave={(e) => e.target.style.opacity = 1}
-            style={{ transition: "background-color 3s, border-color 3s" }}
+            onMouseOver={() => (this.newQuoteBtn.current.style.opacity = 0.75)}
+            onMouseLeave={() => (this.newQuoteBtn.current.style.opacity = 1)}
+            style={{
+              transition: "background-color 3s, border-color 3s",
+              backgroundColor: this.props.color,
+            }}
           >
             New quote
           </button>

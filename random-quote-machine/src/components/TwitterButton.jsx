@@ -1,10 +1,11 @@
-import React from "react";
+import { Component, createRef } from "react";
 import PropTypes from "prop-types";
 import { FaTwitter, FaXTwitter } from "react-icons/fa6";
 
-export class TwitterButton extends React.Component {
+export class TwitterButton extends Component {
   constructor(props) {
     super(props);
+    this.tweetBtn = createRef();
   }
   // TODO: Try Ref instead of 'document.getElementByID'
   render() {
@@ -13,14 +14,14 @@ export class TwitterButton extends React.Component {
       <button
         id="tweet-btn"
         type="button"
-        onMouseOver={() =>
-          (document.getElementById("tweet-btn").style.opacity = 0.75)
-        }
-        onMouseLeave={() =>
-          (document.getElementById("tweet-btn").style.opacity = 1)
-        }
-        style={{ transition: "background-color 3s, border-color 3s" }}
-        className={"mt-3 btn btn-" + this.props.color + " btn-sm-lg rounded-1"}
+        ref={this.tweetBtn}
+        onMouseOver={() => (this.tweetBtn.current.style.opacity = 0.75)}
+        onMouseLeave={() => (this.tweetBtn.current.style.opacity = 1)}
+        style={{
+          transition: "background-color 3s, border-color 3s",
+          backgroundColor: this.props.color,
+        }}
+        className="mt-3 btn btn-sm-lg rounded-1"
       >
         <a
           id="tweet-quote"
