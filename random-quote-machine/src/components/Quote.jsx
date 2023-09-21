@@ -122,7 +122,7 @@ export class Quote extends Component {
             <a
               href="#"
               className="text-decoration-none link-light"
-              onClick={() => false}
+              onClick={(e) => e.preventDefault()}
             >
               New quote
             </a>
