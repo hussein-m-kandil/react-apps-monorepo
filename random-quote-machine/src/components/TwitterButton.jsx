@@ -6,6 +6,7 @@ export class TwitterButton extends Component {
   constructor(props) {
     super(props);
     this.tweetBtn = createRef();
+    this.tweetLink = createRef();
   }
   // TODO: Try Ref instead of 'document.getElementByID'
   render() {
@@ -15,6 +16,7 @@ export class TwitterButton extends Component {
         id="tweet-btn"
         type="button"
         ref={this.tweetBtn}
+        onClick={() => this.tweetLink.current.click()}
         onMouseOver={() => (this.tweetBtn.current.style.opacity = 0.75)}
         onMouseLeave={() => (this.tweetBtn.current.style.opacity = 1)}
         style={{
@@ -32,6 +34,7 @@ export class TwitterButton extends Component {
           target="_blank"
           rel="noreferrer"
           className="text-decoration-none link-light"
+          ref={this.tweetLink}
         >
           <FaTwitter />
           &nbsp;|&nbsp;

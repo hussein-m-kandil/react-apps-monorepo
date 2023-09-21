@@ -1,6 +1,5 @@
 import { Component } from "react";
 import Quote from "./components/Quote";
-import { FaGithub, FaRegCopyright } from "react-icons/fa6";
 
 export class App extends Component {
   constructor(props) {
@@ -67,29 +66,14 @@ export class App extends Component {
           </div>
         </div>
         <div className="row mx-auto mt-auto mb-0">
-          <div className="fs-6 text-light text-center">
-            If the quotes does not appear randomly generated, or does not appear
-            at all, and your internet connection is ok, please report this
-            issue&nbsp;
+          <div className="text-light text-center my-3">
             <a
-              href="https://github.com/hussein-m-kandil/react-apps-monorepo"
+              href="https://github.com/hussein-m-kandil/react-apps-monorepo/"
               target="_blank"
               rel="noreferrer"
-              className="text-decoration-none link-light"
+              className="link-light"
             >
-              <em>here</em> <FaGithub className="align-center" />
-            </a>
-          </div>
-          <div className="my-3 text-light text-center">
-            <FaRegCopyright className="align-center" />
-            &nbsp;By&nbsp;
-            <a
-              href="https://github.com/hussein-m-kandil/react-apps-monorepo"
-              target="_blank"
-              rel="noreferrer"
-              className="text-decoration-none link-light"
-            >
-              <em>Hussein Kandil</em>
+              By <em>Hussein Kandil</em>
             </a>
           </div>
         </div>

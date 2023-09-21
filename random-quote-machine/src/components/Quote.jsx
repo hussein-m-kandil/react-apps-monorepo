@@ -44,6 +44,7 @@ export class Quote extends Component {
 
   getNewQuote() {
     this.setState({ quote: { text: "", author: "" } });
+    this.newQuoteBtn.current.blur();
     setTimeout(() => {
       this.props.changeColor();
       this.fetchNewQuotesJSON();
@@ -77,7 +78,7 @@ export class Quote extends Component {
             >
               <FaQuoteLeft
                 className="me-2 align-text-bottom"
-                style={{ fontSize: "2.2rem" }}
+                style={{ fontSize: "2.5rem" }}
               />
               <span className="align-bottom">{this.state.quote.text}</span>
             </h2>
@@ -118,7 +119,13 @@ export class Quote extends Component {
               backgroundColor: this.props.color,
             }}
           >
-            New quote
+            <a
+              href="#"
+              className="text-decoration-none link-light"
+              onClick={() => false}
+            >
+              New quote
+            </a>
           </button>
         </div>
       </Fragment>
