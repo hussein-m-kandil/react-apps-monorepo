@@ -18,6 +18,7 @@ export class Quote extends Component {
         author: "",
       },
     };
+    this.fetchNewQuote = this.fetchNewQuote.bind(this);
     this.getNewQuote = this.getNewQuote.bind(this);
     this.setQuoteFromFallback = this.setQuoteFromFallback.bind(this);
   }
@@ -27,7 +28,7 @@ export class Quote extends Component {
     this.setState({ quote: this.fallbackQuotes[randomIndex] });
   }
 
-  async fetchNewQuotesJSON() {
+  async fetchNewQuote() {
     try {
       const response = await fetch("https://api.quotable.io/random");
       if (response.ok) {
@@ -47,7 +48,7 @@ export class Quote extends Component {
     this.newQuoteBtn.current.blur();
     setTimeout(() => {
       this.props.changeColor();
-      this.fetchNewQuotesJSON();
+      this.fetchNewQuote();
     }, 1000);
   }
 
