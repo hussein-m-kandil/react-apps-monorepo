@@ -1,24 +1,55 @@
-import { useState } from "react";
-import "./App.css";
+import { Component, createRef } from "react";
+import { marked } from "marked";
 
-function App() {
-  const [count, setCount] = useState(0);
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.previewDiv = createRef();
+    this.state = {
+      pureMarkdown: "# Marked in the browser\n\nRendered by **marked**.",
+    };
+    this.handleMarkdownInput = this.processMarkdown.bind(this);
+  }
 
-  return (
-    <div className="container">
-      <div className="row">
-        <div className="position-absolute top-50 start-50 translate-middle w-100">
-          <h1>Counter App</h1>
-          <button
-            className="btn btn-dark text-danger fs-3 d-block mx-auto my-5 p-3"
-            onClick={() => setCount((count) => count + 1)}
-          >
-            count is&nbsp;<span className="text-warning">{count}</span>
-          </button>
+  convertNewLineToBr(text) {
+    let newText = "";
+    for (let i = 0; i < text.length; i++) {
+      newText += text[i] === "\n" ? "<br>" : text[i];
+    }
+    return newText;
+  }
+
+  processMarkdown() {
+    // const newLineBecomeBr = this.convertNewLineToBr(this.state.pureMarkdown);
+    const newLineBecomeBr = this.state.pureMarkdown.replace("\r", "").replace("\n", "<br>");
+    console.log(newLineBecomeBr);
+    this.previewDiv.current.innerHTML = marked.parse(newLineBecomeBr);
+  }
+
+  componentDidMount() {
+    this.processMarkdown();
+  }
+
+  componentDidUpdate() {
+    this.processMarkdown();
+  }
+
+  render() {
+    return (
+      <div className="container-fluid">
+        <div className="row">
+          <textarea
+            id="editor"
+            rows={7}
+            placeholder="Enter you markdown here ;)"
+            onChange={(e) => this.setState({ pureMarkdown: e.target.value })}
+            value={this.state.pureMarkdown}
+          ></textarea>
         </div>
+        <div id="preview" ref={this.previewDiv}></div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default App;
