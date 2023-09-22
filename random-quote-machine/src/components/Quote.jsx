@@ -105,7 +105,8 @@ export class Quote extends Component {
         <div className="d-flex flex-column flex-sm-row justify-content-between align-items-end">
           <TwitterButton
             color={this.props.color}
-            quoteText={`"${this.state.quote.text}"\n\n- ${this.state.quote.author}\n\n`}
+            tweetText={`"${this.state.quote.text}"\n\n- ${this.state.quote.author}\n\n`}
+            tweetHashtags={"quotes"}
           />
           <button
             type="button"

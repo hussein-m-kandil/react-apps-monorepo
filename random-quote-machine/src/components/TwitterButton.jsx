@@ -10,26 +10,35 @@ export class TwitterButton extends Component {
   }
   // TODO: Try Ref instead of 'document.getElementByID'
   render() {
-    const encodedQuote = encodeURI(this.props.quoteText);
+    const encodedTweet = encodeURI("text=" + this.props.tweetText);
+    let tweetHashtags;
+    if (this.props.tweetHashtags && this.props.tweetHashtags?.length > 0) {
+      tweetHashtags = `hashtags=${this.props.tweetHashtags}&`;
+    } else {
+      tweetHashtags = "";
+    }
     return (
       <button
         id="tweet-btn"
         type="button"
         ref={this.tweetBtn}
-        onClick={() => this.tweetLink.current.click()}
+        onClick={(e) => {
+          if (e.target === this.tweetBtn.current) {
+            this.tweetLink.current.click();
+          }
+        }}
         onMouseOver={() => (this.tweetBtn.current.style.opacity = 0.75)}
         onMouseLeave={() => (this.tweetBtn.current.style.opacity = 1)}
         style={{
           transition: "background-color 3s, border-color 3s",
           backgroundColor: this.props.color,
         }}
-        className="mt-3 btn btn-sm-lg rounded-1"
+        className="mt-3 btn btn-lg rounded-1"
       >
         <a
           id="tweet-quote"
           href={
-            "https://twitter.com/intent/tweet?hashtags=quotes&text=" +
-            encodedQuote
+            "https://twitter.com/intent/tweet?" + tweetHashtags + encodedTweet
           }
           target="_blank"
           rel="noreferrer"
@@ -48,7 +57,8 @@ export class TwitterButton extends Component {
 
 TwitterButton.propTypes = {
   color: PropTypes.string.isRequired,
-  quoteText: PropTypes.string.isRequired,
+  tweetText: PropTypes.string.isRequired,
+  tweetHashtags: PropTypes.string,
 };
 
 export default TwitterButton;
