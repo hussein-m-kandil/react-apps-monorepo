@@ -4,6 +4,7 @@
   -moz-osx-font-smoothing: grayscale;
   font-size: 100%;
   box-sizing: border-box;
+  font-family: 'Courier New', Courier, monospace, sans-serif;
 }
 
 *::before,
@@ -23,16 +24,21 @@ img {
 }
 
 blockquote {
-  border-radius: 0.3rem;
-  padding: 0.3rem;
-  background-color: beige;
+  border-left: 3px solid rgb(96, 96, 96);
+  background-color: rgb(235, 235, 235);
+  padding: 0.1rem;
+}
+
+blockquote p {
+  margin: 1rem;
 }
 
 code {
   display: inline-block;
-  border-radius: 0.3em;
-  padding: 0.3rem;
-  background-color: lightgray
+  border-radius: 0.2rem;
+  padding: 0.5rem;
+  background-color: rgb(235, 235, 235);
+  border: 1px solid lightgray;
 }
 
 #editor {
@@ -52,6 +58,14 @@ code {
   margin: 1rem auto;
 }
 
+label {
+  display: block;
+  width: calc(75% + 2rem);
+  margin: auto;
+  font-weight: bold;
+  margin-top: 2rem;
+}
+
 @media screen and (min-width: 1920px) {
   #editor {
     width: 50%;
@@ -60,14 +74,22 @@ code {
   #preview {
     width: 50%;
   }
+
+  label {
+    width: calc(50% + 2rem);
+  }
 }
 
 @media screen and (max-width: 690px) {
   #editor {
-    width: 95%;
+    width: 90%;
   }
 
   #preview {
-    width: 95%;
+    width: 90%;
+  }
+
+  label {
+    width: calc(90% + 2rem);
   }
 }
