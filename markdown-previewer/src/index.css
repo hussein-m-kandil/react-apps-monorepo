@@ -17,8 +17,57 @@ body {
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  text-align: center;
-  line-height: 1.1;
+img {
+  display: block;
+  width: 263px;
+}
+
+blockquote {
+  border-radius: 0.3rem;
+  padding: 0.3rem;
+  background-color: beige;
+}
+
+code {
+  display: inline-block;
+  border-radius: 0.3em;
+  padding: 0.3rem;
+  background-color: lightgray
+}
+
+#editor {
+  width: 75%;
+  display: block;
+  border: 1px solid black;
+  padding: 1rem;
+  margin: 1rem auto;
+  resize: vertical;
+  overflow: scroll;
+}
+
+#preview {
+  width: 75%;
+  border: 1px solid black;
+  padding: 1rem;
+  margin: 1rem auto;
+}
+
+@media screen and (min-width: 1920px) {
+  #editor {
+    width: 50%;
+  }
+
+  #preview {
+    width: 50%;
+  }
+}
+
+@media screen and (max-width: 690px) {
+  #editor {
+    width: 95%;
+  }
+
+  #preview {
+    width: 95%;
+  }
 }
