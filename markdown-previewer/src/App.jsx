@@ -1,7 +1,7 @@
-import { Component, createRef, Fragment } from "react";
+import { Component, Fragment } from "react";
 import { marked } from "marked";
-import hljs from "highlight.js";
 import "highlight.js/styles/github.css";
+import hljs from "highlight.js/lib/common";
 
 const INITIAL_MARKDOWN = `\
 # Markdown Previewer
@@ -36,16 +36,17 @@ for (let i = 0; i < 10; i++) {
 - Markdown Extra
 - LiaScript
 
-#### Best regards, Hussein Kandil
+#### My image in Markdown ;)
 ![A fantasy picture of me setting on the clouds.](https://mir-s3-cdn-cf.behance.net/project_modules/fs/0123ab25920475.5634cd0525408.jpg)
+
+###### Best regards, Hussein Kandil
 `;
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.previewDiv = createRef();
     this.state = {
-      pureMarkdown: INITIAL_MARKDOWN,
+      mdPreview: "",
     };
     this.handleMarkdownInput = this.processMarkdown.bind(this);
   }
@@ -53,7 +54,6 @@ class App extends Component {
   replaceNewLinesWithHTMLBr(text) {
     let newText = "";
     let insideCodeElement = false;
-    let angleBracketsRegex = /(<|>)/;
     for (let i = 0; i < text.length; i++) {
       if (text[i] === "`" && i !== text.length - 1 && text[i + 1] !== "`") {
         insideCodeElement = !insideCodeElement;
@@ -64,24 +64,8 @@ class App extends Component {
         if (i !== 0 && i !== text.length - 1) {
           if (text[i - 1] === "\n" && text[i + 1] === "\n") {
             newText += "<br>\n";
-          } else if (text[i - 1] !== "\n" && text[i + 1] !== "\n") {
-            if (
-              !angleBracketsRegex.test(text[i - 1]) &&
-              !angleBracketsRegex.test(text[i + 1])
-            ) {
-              newText += "<br>\n";
-            } else {
-              newText += text[i];
-            }
           } else if (text[i - 1] === "\n" && text[i + 1] !== "\n") {
-            if (
-              !angleBracketsRegex.test(text[i - 1]) &&
-              !angleBracketsRegex.test(text[i + 1])
-            ) {
-              newText += "<br>\n\n";
-            } else {
-              newText += text[i];
-            }
+            newText += "<br>\n\n";
           } else {
             newText += text[i];
           }
@@ -95,26 +79,24 @@ class App extends Component {
     return newText;
   }
 
-  processMarkdown() {
-    let newLineBecomeBr = this.state.pureMarkdown; // Temp
-    newLineBecomeBr = this.replaceNewLinesWithHTMLBr(this.state.pureMarkdown);
-    console.log(newLineBecomeBr);
-    this.previewDiv.current.innerHTML = marked.parse(newLineBecomeBr);
-  }
-
   highlightAnyCodeSyntax() {
     Array.from(document.getElementsByTagName("code")).forEach((code) => {
-      code.innerHTML = hljs.highlightAuto(code.innerHTML).value;
+      code.innerHTML =
+        hljs?.highlightAuto(code.innerHTML).value ?? code.innerHTML;
     });
   }
 
+  processMarkdown(markdown) {
+    let newLineBecomeBr = markdown; // Temp
+    newLineBecomeBr = this.replaceNewLinesWithHTMLBr(markdown);
+    this.setState({ mdPreview: marked.parse(newLineBecomeBr) });
+  }
+
   componentDidMount() {
-    this.processMarkdown();
-    this.highlightAnyCodeSyntax();
+    this.processMarkdown(INITIAL_MARKDOWN);
   }
 
   componentDidUpdate() {
-    this.processMarkdown();
     this.highlightAnyCodeSyntax();
   }
 
@@ -128,12 +110,15 @@ class App extends Component {
         <textarea
           id="editor"
           rows={7}
-          onChange={(e) => this.setState({ pureMarkdown: e.target.value })}
-          value={this.state.pureMarkdown}
+          onChange={(e) => this.processMarkdown(e.target.value)}
+          defaultValue={INITIAL_MARKDOWN}
         ></textarea>
 
         <label htmlFor="preview">Previewer</label>
-        <div id="preview" ref={this.previewDiv}></div>
+        <div
+          id="preview"
+          dangerouslySetInnerHTML={{ __html: this.state.mdPreview }}
+        />
       </Fragment>
     );
   }
