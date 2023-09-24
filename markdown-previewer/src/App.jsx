@@ -11,7 +11,7 @@ const INITIAL_MARKDOWN = `\
 > **Markdown** is a lightweight markup language for creating formatted text using a plain-text editor. \
 John Gruber created Markdown in 2004 as a markup language that is easy to read in its source code form.
 Visit [Wikipedia](https://en.wikipedia.org/wiki/Markdown), for more info.  
- 
+
 &nbsp;  
 ## Inline code in Markdown
 In JavaScript, \`console.log("Hello World!"); // Outputs: Hello World!\`
@@ -80,14 +80,12 @@ class App extends Component {
         newText += text[i];
       }
     }
-    //  TODO: any '<br>' following blockquote is caged inside the blockquote!!
-    // You could solve this by filtering the DOM and move line breaks outside blockquote
     return newText;
   }
 
   processMarkdown(markdownString) {
-    let newLineBecomeBr = markdownString; // Temp
-    newLineBecomeBr = this.replaceNewLinesWithHTMLBr(markdownString);
+    const mdStringWithLineBreaks =
+      this.replaceNewLinesWithHTMLBr(markdownString);
     // Create reference instance configured with marked-highlight
     const marked = new Marked(
       markedHighlight({
@@ -112,7 +110,7 @@ class App extends Component {
       renderer: renderer,
     });
     // Compile (parse code with 'marked')
-    const parsed = marked.parse(newLineBecomeBr);
+    const parsed = marked.parse(mdStringWithLineBreaks);
     this.setState({
       mdPreview: parsed,
     });
@@ -141,6 +139,18 @@ class App extends Component {
           id="preview"
           dangerouslySetInnerHTML={{ __html: this.state.mdPreview }}
         />
+        <h6 style={{ margin: "2rem auto", textAlign: "center" }}>
+          <a
+            href="https://github.com/hussein-m-kandil/react-apps-monorepo/"
+            title="My GitHub account"
+            target="_blank"
+            rel="noreferrer"
+            className="link-light"
+            style={{ textDecoration: "none", color: "black" }}
+          >
+            By <em>Hussein Kandil</em>
+          </a>
+        </h6>
       </Fragment>
     );
   }
