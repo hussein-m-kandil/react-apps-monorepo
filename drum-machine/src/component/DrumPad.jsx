@@ -7,8 +7,9 @@ class DrumPad extends Component {
     super(props);
     this.state = {
       loop: false,
+      volume: props.defaultVol,
     };
-    this.defaultVolume = 0.5;
+    // Background colors classes
     this.mainBgClass = "bg-dark";
     this.bgClasses = [
       "bg-danger",
@@ -17,14 +18,16 @@ class DrumPad extends Component {
       "bg-info",
       "bg-primary",
     ];
+    // Refs
     this.audio = createRef();
     this.pad = createRef();
+    // This binds
     this.drum = this.drum.bind(this);
-    this.changeVolume = this.changeVolume.bind(this);
-    this.coloredFlash = this.coloredFlash.bind(this);
+    this.setVolume = this.setVolume.bind(this);
+    this.flashColor = this.flashColor.bind(this);
   }
 
-  coloredFlash() {
+  flashColor() {
     const colorClass =
       this.bgClasses[Math.floor(Math.random() * this.bgClasses.length)];
     // Change pad's background from dark into any color (other than dark/light)
@@ -38,27 +41,51 @@ class DrumPad extends Component {
   }
 
   componentDidMount() {
-    this.props.refDrumPad(this.props.drumKey, this.pad);
-    this.audio.current.volume = this.defaultVolume;
-    // Colored flash
-    this.audio.current.addEventListener("play", this.coloredFlash);
-    this.audio.current.addEventListener("seeked", this.coloredFlash);
+    // Set the pads objects needed in the parent
+    this.props.refDrumPad(this.props.drumKey, {
+      padRef: this.pad,
+      getPadVol: () => this.state.volume,
+      padVolSetter: this.setVolume,
+    });
+    this.audio.current.volume = this.state.volume;
+    // // Seek to the beginning on end
+    // this.audio.current.addEventListener("ended", () =>
+    //   this.audio.current.fastSeek(0.0)
+    // );
+    // Colored flash & drum name
+    this.audio.current.addEventListener("play", () => {
+      this.props.setCurrentDrumName(this.props.drumName.replace("-", " "));
+      this.flashColor();
+    });
+    this.audio.current.addEventListener("seeked", () => {
+      this.props.setCurrentDrumName("");
+      this.flashColor();
+      if (this.state.loop && !this.audio.current.paused) {
+        setTimeout(() => {
+          this.props.setCurrentDrumName(this.props.drumName.replace("-", " "));
+        }, 100);
+      }
+    });
+    this.audio.current.addEventListener("pause", () =>
+      this.props.setCurrentDrumName("")
+    );
   }
 
   drum() {
-    // Set the current drum name
-    this.props.setCurrentDrumName(this.props.drumName);
     // If playing, then: back to beginning, else: play
     if (this.audio.current.currentTime > 0.0) {
       this.audio.current.fastSeek(0.0);
     }
     this.audio.current.play();
-    // Reset the current drum name
-    setTimeout(() => this.props.setCurrentDrumName(""), 500);
   }
 
-  changeVolume(val) {
-    this.audio.current.volume = val >= 0 && val <= 1 ? val : 0.5;
+  setVolume(val) {
+    val = Number(val);
+    this.setState({ volume: val >= 0 && val <= 1 ? val : 0.5 });
+  }
+
+  componentDidUpdate() {
+    this.audio.current.volume = this.state.volume;
   }
 
   render() {
@@ -92,18 +119,25 @@ class DrumPad extends Component {
             this.mainBgClass
           }
           style={{ fontSize: "smaller" }}
-          onClick={() => this.setState((state) => ({ loop: !state.loop }))}
+          onClick={() => {
+            this.setState((state) => ({ loop: !state.loop }));
+            if (this.audio.current.currentTime > 0.0) {
+              this.audio.current.pause();
+              this.audio.current.fastSeek(0.0);
+            }
+          }}
         >
           Loop
         </div>
         <RangeInput
           label="Vol"
+          fontSize="smaller"
           min={0}
           max={1}
           step={0.1}
-          defaultValue={this.defaultVolume}
+          value={this.state.volume}
           bgClass={this.mainBgClass}
-          onChange={this.changeVolume}
+          onChange={this.setVolume}
         />
       </div>
     );
@@ -114,6 +148,7 @@ DrumPad.propTypes = {
   drumKey: PropTypes.string.isRequired,
   drumName: PropTypes.string.isRequired,
   drumFile: PropTypes.string.isRequired,
+  defaultVol: PropTypes.number.isRequired,
   refDrumPad: PropTypes.func.isRequired,
   setCurrentDrumName: PropTypes.func,
 };

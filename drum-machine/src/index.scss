@@ -19,7 +19,7 @@ $hmk-box-shadow: 0 0 $hmk-blur $hmk-width $hmk-color;
 $hmk-focus-box-shadow: $hmk-box-shadow;
 
 
-$form-range-track-width: 80%;
+$form-range-track-width: 100%;
 $form-range-track-height: .1rem;
 // $form-range-track-cursor: pointer;
 $form-range-track-bg: $hmk-gray-300;
@@ -30,6 +30,6 @@ $form-range-thumb-height: $form-range-thumb-width;
 $form-range-thumb-bg: $hmk-gray-300;
 $form-range-thumb-focus-box-shadow: 0 0 0 1px $hmk-gray-100, $hmk-focus-box-shadow;
 $form-range-thumb-focus-box-shadow-width: $hmk-width; // For focus box shadow issue in Edge
-$form-range-thumb-active-bg: $hmk-gray-200;
+$form-range-thumb-active-bg: $hmk-gray-100;
 
 @import "bootstrap/scss/bootstrap";

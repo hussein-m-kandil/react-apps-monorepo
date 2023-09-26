@@ -8,71 +8,76 @@ class App extends Component {
     super(props);
     this.state = {
       currentDrumName: "",
+      drumPadsObjects: {},
+      mainVolume: 0.5,
     };
-    this.drumPadsRefs = {};
-    props.drumsData.forEach((drum) => {
-      this.drumPadsRefs[drum.keyName] = null;
-    });
     this.refDrumPad = this.refDrumPad.bind(this);
     this.setCurrentDrumName = this.setCurrentDrumName.bind(this);
+    this.setMainVolume = this.setMainVolume.bind(this);
+  }
+
+  setMainVolume(val) {
+    val = Number(val);
+    val = val >= 0 && val <= 1 ? val : 1;
+    this.setState({ mainVolume: val });
+    // Change all of the drum pads' volumes
+    // Based on the pad objects in the state which came from the 'DrumPad' components
+    const drumPads = this.state.drumPadsObjects;
+    for (const drumKey in this.state.drumPadsObjects) {
+      drumPads[drumKey].padVolSetter(val);
+    }
   }
 
   setCurrentDrumName(drumName) {
     this.setState({ currentDrumName: drumName });
   }
 
-  refDrumPad(drumPadKey, drumPadElement) {
-    this.drumPadsRefs[drumPadKey] = drumPadElement;
+  refDrumPad(drumPadKey, drumPadObj) {
+    this.setState((state) => {
+      state.drumPadsObjects[drumPadKey] = drumPadObj;
+    });
   }
 
   componentDidMount() {
+    // Enable keyboard keys for drumming
     document.addEventListener("keydown", (event) => {
       event.preventDefault();
       switch (event.key) {
         case "q":
         case "Q":
-        case "ض":
-          this.drumPadsRefs["Q"].current.click();
+          this.state.drumPadsObjects["Q"].padRef.current.click();
           break;
         case "w":
         case "W":
-        case "ص":
-          this.drumPadsRefs["W"].current.click();
+          this.state.drumPadsObjects["W"].padRef.current.click();
           break;
         case "e":
         case "E":
-        case "ث":
-          this.drumPadsRefs["E"].current.click();
+          this.state.drumPadsObjects["E"].padRef.current.click();
           break;
         case "a":
         case "A":
-        case "ش":
-          this.drumPadsRefs["A"].current.click();
+          this.state.drumPadsObjects["A"].padRef.current.click();
           break;
         case "s":
         case "S":
-        case "س":
-          this.drumPadsRefs["S"].current.click();
+          this.state.drumPadsObjects["S"].padRef.current.click();
           break;
         case "d":
         case "D":
-        case "ب":
-          this.drumPadsRefs["D"].current.click();
+          this.state.drumPadsObjects["D"].padRef.current.click();
           break;
         case "z":
         case "Z":
-        case "ئ":
-          this.drumPadsRefs["Z"].current.click();
+          this.state.drumPadsObjects["Z"].padRef.current.click();
           break;
         case "x":
         case "X":
-        case "ء":
-          this.drumPadsRefs["X"].current.click();
+          this.state.drumPadsObjects["X"].padRef.current.click();
           break;
         case "c":
         case "C":
-        case "ؤ":
-          this.drumPadsRefs["C"].current.click();
+          this.state.drumPadsObjects["C"].padRef.current.click();
           break;
       }
     });
@@ -94,6 +99,7 @@ class App extends Component {
                     drumKey={drum.keyName}
                     drumName={drum.drumName}
                     drumFile={this.props.assetsPath + drum.fileName}
+                    defaultVol={this.state.mainVolume}
                     refDrumPad={this.refDrumPad}
                     setCurrentDrumName={this.setCurrentDrumName}
                   />
@@ -127,9 +133,8 @@ class App extends Component {
               min={0}
               max={1}
               step={0.1}
-              defaultValue={this.defaultVolume}
-              bgClass={"bg-danger"}
-              onChange={this.changeVolume}
+              value={this.state.mainVolume}
+              onChange={this.setMainVolume}
             />
           </div>
         </div>

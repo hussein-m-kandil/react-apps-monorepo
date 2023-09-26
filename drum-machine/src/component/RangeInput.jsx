@@ -7,26 +7,26 @@ class RangeInput extends Component {
       <div
         role="button"
         className={
-          "rounded-bottom-2 px-1 mx-auto text-light text-start " +
-          this.props.bgClass
+          "rounded-bottom-2 px-2 mx-auto " +
+          "d-flex justify-content-center align-items-center " +
+          (this.props.bgClass ?? "")
         }
       >
         <label
           htmlFor="vol-range"
-          className="form-label"
-          style={{ fontSize: "smaller" }}
+          className="form-label text-light text-center d-block my-0 mx-auto"
+          style={{ fontSize: this.props.fontSize ?? "normal" }}
         >
           {this.props.label}
         </label>
         <input
-          id="vol-range"
           type="range"
-          className="form-range w-75 align-middle"
+          className="form-range d-block my-0 mx-auto p-2"
           min={this.props.min}
           max={this.props.max}
           step={this.props.step}
-          defaultValue={this.props.defaultValue}
-          onChange={(e) => this.props.onChange(e.target.value)}
+          value={this.props.value ?? this.props.max}
+          onChange={(e) => this.props.onChange?.(e.target.value)}
         ></input>
       </div>
     );
@@ -38,8 +38,9 @@ RangeInput.propTypes = {
   min: PropTypes.number.isRequired,
   max: PropTypes.number.isRequired,
   step: PropTypes.number.isRequired,
-  bgClass: PropTypes.string.isRequired,
-  defaultValue: PropTypes.number,
+  bgClass: PropTypes.string,
+  value: PropTypes.number,
+  fontSize: PropTypes.string,
   onChange: PropTypes.func,
 };
 
