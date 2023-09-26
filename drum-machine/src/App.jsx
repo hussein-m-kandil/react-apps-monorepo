@@ -1,21 +1,28 @@
 import { Component } from "react";
-import DrumButton from "./component/DrumButton";
+import PropTypes from "prop-types";
+import DrumPad from "./component/DrumPad";
+import RangeInput from "./component/RangeInput";
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.ASSETS_PATH = "/src/assets/";
-    this.drums = [
-      { keyName: "Q", drumName: "Heater-1", fileName: "Heater-1.mp3" },
-      { keyName: "W", drumName: "Heater-2", fileName: "Heater-2.mp3" },
-      { keyName: "E", drumName: "Heater-3", fileName: "Heater-3.mp3" },
-      { keyName: "A", drumName: "Heater-4", fileName: "Heater-4.mp3" },
-      { keyName: "S", drumName: "Clap", fileName: "Clap.mp3" },
-      { keyName: "D", drumName: "Open-HH", fileName: "Open-HH.mp3" },
-      { keyName: "Z", drumName: "Kick-n'-Hat", fileName: "Kick-n-Hat.mp3" },
-      { keyName: "X", drumName: "Kick", fileName: "Kick.mp3" },
-      { keyName: "C", drumName: "Closed-HH", fileName: "Closed-HH.mp3" },
-    ];
+    this.state = {
+      currentDrumName: "",
+    };
+    this.drumPadsRefs = {};
+    props.drumsData.forEach((drum) => {
+      this.drumPadsRefs[drum.keyName] = null;
+    });
+    this.refDrumPad = this.refDrumPad.bind(this);
+    this.setCurrentDrumName = this.setCurrentDrumName.bind(this);
+  }
+
+  setCurrentDrumName(drumName) {
+    this.setState({ currentDrumName: drumName });
+  }
+
+  refDrumPad(drumPadKey, drumPadElement) {
+    this.drumPadsRefs[drumPadKey] = drumPadElement;
   }
 
   componentDidMount() {
@@ -25,7 +32,47 @@ class App extends Component {
         case "q":
         case "Q":
         case "ض":
-          document.getElementById("Q")?.play();
+          this.drumPadsRefs["Q"].current.click();
+          break;
+        case "w":
+        case "W":
+        case "ص":
+          this.drumPadsRefs["W"].current.click();
+          break;
+        case "e":
+        case "E":
+        case "ث":
+          this.drumPadsRefs["E"].current.click();
+          break;
+        case "a":
+        case "A":
+        case "ش":
+          this.drumPadsRefs["A"].current.click();
+          break;
+        case "s":
+        case "S":
+        case "س":
+          this.drumPadsRefs["S"].current.click();
+          break;
+        case "d":
+        case "D":
+        case "ب":
+          this.drumPadsRefs["D"].current.click();
+          break;
+        case "z":
+        case "Z":
+        case "ئ":
+          this.drumPadsRefs["Z"].current.click();
+          break;
+        case "x":
+        case "X":
+        case "ء":
+          this.drumPadsRefs["X"].current.click();
+          break;
+        case "c":
+        case "C":
+        case "ؤ":
+          this.drumPadsRefs["C"].current.click();
           break;
       }
     });
@@ -33,30 +80,67 @@ class App extends Component {
 
   render() {
     return (
-      <div className="container-fluid">
+      <div className="container">
         <div
-          className="row m-auto mt-5
-          col-11 col-sm-10 col-md-9 col-lg-7 col-xl-6 col-xxl-5"
+          id="drum-machine"
+          className="row m-0 my-4 my-sm-5 mx-auto
+          col-10 col-lg-8 col-xl-6 col-xxl-5"
         >
-          <div
-            id="drum-machine"
-            className="d-flex flex-md-row justify-content-between"
-          >
-            {this.drums.map((drum) => {
+          <div className="col-12 col-md-8 bg-secondary row row-cols-3 g-2 pb-2 m-0">
+            {this.props.drumsData.map((drum) => {
               return (
-                <DrumButton
-                  key={drum.keyName}
-                  keyName={drum.keyName}
-                  filePath={this.ASSETS_PATH + drum.fileName}
-                />
+                <div key={drum.keyName} className="col">
+                  <DrumPad
+                    drumKey={drum.keyName}
+                    drumName={drum.drumName}
+                    drumFile={this.props.assetsPath + drum.fileName}
+                    refDrumPad={this.refDrumPad}
+                    setCurrentDrumName={this.setCurrentDrumName}
+                  />
+                </div>
               );
             })}
           </div>
-          <div id="display"></div>
+          <div
+            className="bg-secondary col-12 col-md-4"
+            style={{ padding: "5% 0" }}
+          >
+            <div
+              id="display"
+              className="bg-dark w-75 mx-auto my-2"
+              style={{ padding: "5% 0" }}
+            >
+              <span
+                style={{
+                  display: "block",
+                  height: "1.5rem",
+                  margin: "auto",
+                  textAlign: "center",
+                  color: "white",
+                }}
+              >
+                {this.state.currentDrumName}
+              </span>
+            </div>
+            <RangeInput
+              label="Vol"
+              min={0}
+              max={1}
+              step={0.1}
+              defaultValue={this.defaultVolume}
+              bgClass={"bg-danger"}
+              onChange={this.changeVolume}
+            />
+          </div>
         </div>
       </div>
     );
   }
 }
+
+App.propTypes = {
+  assetsPath: PropTypes.string.isRequired,
+  drumsData: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
 
 export default App;
