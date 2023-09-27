@@ -8,6 +8,7 @@ class DrumPad extends Component {
     this.state = {
       loop: false,
       volume: props.defaultVol,
+      playbackRate: props.defaultPlaybackRate,
     };
     // Background colors classes
     this.mainBgClass = "bg-dark";
@@ -24,7 +25,49 @@ class DrumPad extends Component {
     // This binds
     this.drum = this.drum.bind(this);
     this.setVolume = this.setVolume.bind(this);
+    this.setPlaybackRate = this.setPlaybackRate.bind(this);
     this.flashColor = this.flashColor.bind(this);
+  }
+
+  componentDidMount() {
+    // Set the pads objects needed in the parent
+    this.props.refDrumPad(this.props.drumKey, {
+      padRef: this.pad,
+      getPadVol: () => this.state.volume,
+      setPadVol: this.setVolume,
+      getPadPlaybackRate: () => this.state.playbackRate,
+      setPadPlaybackRate: this.setPlaybackRate,
+    });
+    // Set drum audio
+    this.audio.current.volume = this.state.volume;
+    // Colored flash & drum name
+    this.audio.current.addEventListener("play", () => {
+      this.props.setCurrentDrumName(this.props.drumName.replace("-", " "));
+      this.flashColor();
+    });
+    this.audio.current.addEventListener("seeked", () => {
+      setTimeout(() => {
+        if (!this.audio.current.paused) {
+          this.props.setCurrentDrumName(this.props.drumName.replace("-", " "));
+        }
+        this.flashColor();
+      }, 100);
+    });
+    this.audio.current.addEventListener("seeking", () => {
+      this.props.setCurrentDrumName("");
+    });
+    this.audio.current.addEventListener("pause", () => {
+      this.props.setCurrentDrumName("");
+    });
+    this.audio.current.addEventListener("ended", () => {
+      this.props.setCurrentDrumName("");
+    });
+  }
+
+  setPlaybackRate(rate) {
+    rate = Number(rate);
+    rate = rate >= 0.25 && rate <= 3 ? rate : 1;
+    this.setState({ playbackRate: rate });
   }
 
   flashColor() {
@@ -38,37 +81,6 @@ class DrumPad extends Component {
       this.pad.current.classList.remove(colorClass);
       this.pad.current.classList.add(this.mainBgClass);
     }, 100);
-  }
-
-  componentDidMount() {
-    // Set the pads objects needed in the parent
-    this.props.refDrumPad(this.props.drumKey, {
-      padRef: this.pad,
-      getPadVol: () => this.state.volume,
-      padVolSetter: this.setVolume,
-    });
-    this.audio.current.volume = this.state.volume;
-    // // Seek to the beginning on end
-    // this.audio.current.addEventListener("ended", () =>
-    //   this.audio.current.fastSeek(0.0)
-    // );
-    // Colored flash & drum name
-    this.audio.current.addEventListener("play", () => {
-      this.props.setCurrentDrumName(this.props.drumName.replace("-", " "));
-      this.flashColor();
-    });
-    this.audio.current.addEventListener("seeked", () => {
-      this.props.setCurrentDrumName("");
-      this.flashColor();
-      if (this.state.loop && !this.audio.current.paused) {
-        setTimeout(() => {
-          this.props.setCurrentDrumName(this.props.drumName.replace("-", " "));
-        }, 100);
-      }
-    });
-    this.audio.current.addEventListener("pause", () =>
-      this.props.setCurrentDrumName("")
-    );
   }
 
   drum() {
@@ -86,6 +98,8 @@ class DrumPad extends Component {
 
   componentDidUpdate() {
     this.audio.current.volume = this.state.volume;
+    this.audio.current.playbackRate =
+      this.audio.current.defaultPlaybackRate * this.state.playbackRate;
   }
 
   render() {
@@ -104,7 +118,7 @@ class DrumPad extends Component {
           <audio
             id={this.props.drumKey}
             className="clip"
-            src={this.props.drumFile}
+            src={this.props.drumURL}
             ref={this.audio}
             preload="auto"
             loop={this.state.loop}
@@ -112,25 +126,35 @@ class DrumPad extends Component {
           {this.props.drumKey}
         </div>
         <div
-          role="button"
           className={
-            "px-1 text-center " +
-            (this.state.loop ? "text-light " : "text-secondary ") +
+            "w-100 d-flex px-1 px-sm-2 justify-content-between align-content-bottom " +
             this.mainBgClass
           }
-          style={{ fontSize: "smaller" }}
-          onClick={() => {
-            this.setState((state) => ({ loop: !state.loop }));
-            if (this.audio.current.currentTime > 0.0) {
-              this.audio.current.pause();
-              this.audio.current.fastSeek(0.0);
-            }
-          }}
         >
-          Loop
+          <div
+            role="button"
+            className={this.state.loop ? "text-light " : "text-secondary "}
+            style={{ fontSize: "smaller" }}
+            onClick={() => {
+              this.setState((state) => ({ loop: !state.loop }));
+              if (this.audio.current.currentTime > 0.0) {
+                this.audio.current.pause();
+              }
+            }}
+          >
+            Loop
+          </div>
+          <div
+            className="w-50 text-light text-end"
+            style={{ height: "min-content" }}
+          >
+            <span className="align-middle pb-2" style={{ fontSize: "x-small" }}>
+              {this.state.playbackRate}x
+            </span>
+          </div>
         </div>
         <RangeInput
-          label="Vol"
+          label="V"
           fontSize="smaller"
           min={0}
           max={1}
@@ -138,6 +162,17 @@ class DrumPad extends Component {
           value={this.state.volume}
           bgClass={this.mainBgClass}
           onChange={this.setVolume}
+        />
+        <RangeInput
+          label="R"
+          fontSize="smaller"
+          min={0.25}
+          max={3}
+          step={0.25}
+          value={this.state.playbackRate}
+          bgClass={this.mainBgClass}
+          borderClass={"rounded-bottom-2"}
+          onChange={this.setPlaybackRate}
         />
       </div>
     );
@@ -148,7 +183,9 @@ DrumPad.propTypes = {
   drumKey: PropTypes.string.isRequired,
   drumName: PropTypes.string.isRequired,
   drumFile: PropTypes.string.isRequired,
+  drumURL: PropTypes.string.isRequired,
   defaultVol: PropTypes.number.isRequired,
+  defaultPlaybackRate: PropTypes.number.isRequired,
   refDrumPad: PropTypes.func.isRequired,
   setCurrentDrumName: PropTypes.func,
 };

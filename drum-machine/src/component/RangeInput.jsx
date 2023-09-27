@@ -7,8 +7,9 @@ class RangeInput extends Component {
       <div
         role="button"
         className={
-          "rounded-bottom-2 px-2 mx-auto " +
-          "d-flex justify-content-center align-items-center " +
+          (this.props.borderClass ?? "") +
+          " px-1 px-sm-2 " +
+          "w-100 d-flex justify-content-between align-items-center " +
           (this.props.bgClass ?? "")
         }
       >
@@ -21,7 +22,7 @@ class RangeInput extends Component {
         </label>
         <input
           type="range"
-          className="form-range d-block my-0 mx-auto p-2"
+          className="form-range d-block my-0 mx-auto ps-2"
           min={this.props.min}
           max={this.props.max}
           step={this.props.step}
@@ -39,6 +40,7 @@ RangeInput.propTypes = {
   max: PropTypes.number.isRequired,
   step: PropTypes.number.isRequired,
   bgClass: PropTypes.string,
+  borderClass: PropTypes.string,
   value: PropTypes.number,
   fontSize: PropTypes.string,
   onChange: PropTypes.func,

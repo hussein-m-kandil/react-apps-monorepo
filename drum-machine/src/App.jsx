@@ -6,25 +6,39 @@ import RangeInput from "./component/RangeInput";
 class App extends Component {
   constructor(props) {
     super(props);
+    // State
     this.state = {
       currentDrumName: "",
       drumPadsObjects: {},
       mainVolume: 0.5,
+      mainPlaybackRate: 1,
     };
+    // This binds to methods
     this.refDrumPad = this.refDrumPad.bind(this);
     this.setCurrentDrumName = this.setCurrentDrumName.bind(this);
     this.setMainVolume = this.setMainVolume.bind(this);
+    this.setMainPlaybackRate = this.setMainPlaybackRate.bind(this);
   }
 
-  setMainVolume(val) {
-    val = Number(val);
-    val = val >= 0 && val <= 1 ? val : 1;
-    this.setState({ mainVolume: val });
-    // Change all of the drum pads' volumes
-    // Based on the pad objects in the state which came from the 'DrumPad' components
-    const drumPads = this.state.drumPadsObjects;
+  setMainPlaybackRate(rate) {
+    rate = Number(rate);
+    rate = rate >= 0.25 && rate <= 3 ? rate : 1;
+    this.setState({ mainPlaybackRate: rate });
+    // Change all of the drum pads' playback rates
+    // Based on the pad objects in the state came from the 'DrumPad' components
     for (const drumKey in this.state.drumPadsObjects) {
-      drumPads[drumKey].padVolSetter(val);
+      this.state.drumPadsObjects[drumKey].setPadPlaybackRate(rate);
+    }
+  }
+
+  setMainVolume(vol) {
+    vol = Number(vol);
+    vol = vol >= 0 && vol <= 1 ? vol : 1;
+    this.setState({ mainVolume: vol });
+    // Change all of the drum pads' volumes
+    // Based on the pad objects in the state came from the 'DrumPad' components
+    for (const drumKey in this.state.drumPadsObjects) {
+      this.state.drumPadsObjects[drumKey].setPadVol(vol);
     }
   }
 
@@ -88,10 +102,10 @@ class App extends Component {
       <div className="container">
         <div
           id="drum-machine"
-          className="row m-0 my-4 my-sm-5 mx-auto
-          col-10 col-lg-8 col-xl-6 col-xxl-5"
+          className="row bg-secondary rounded-2 m-0 my-3 mt-md-4 mx-auto
+          col-sm-11 col-md-10 col-lg-8 col-xl-6 col-xxl-5"
         >
-          <div className="col-12 col-md-8 bg-secondary row row-cols-3 g-2 pb-2 m-0">
+          <div className={"col-12 col-md-8 row row-cols-3 g-2 pb-2 m-0"}>
             {this.props.drumsData.map((drum) => {
               return (
                 <div key={drum.keyName} className="col">
@@ -99,7 +113,9 @@ class App extends Component {
                     drumKey={drum.keyName}
                     drumName={drum.drumName}
                     drumFile={this.props.assetsPath + drum.fileName}
+                    drumURL={drum.fileURL}
                     defaultVol={this.state.mainVolume}
+                    defaultPlaybackRate={this.state.mainPlaybackRate}
                     refDrumPad={this.refDrumPad}
                     setCurrentDrumName={this.setCurrentDrumName}
                   />
@@ -107,35 +123,64 @@ class App extends Component {
               );
             })}
           </div>
-          <div
-            className="bg-secondary col-12 col-md-4"
-            style={{ padding: "5% 0" }}
-          >
+          <div className={"col-12 col-md-4 py-3 py-md-auto"}>
             <div
-              id="display"
-              className="bg-dark w-75 mx-auto my-2"
-              style={{ padding: "5% 0" }}
+              className={
+                "w-100 h-100 d-flex flex-column justify-content-center align-items-stretch"
+              }
             >
-              <span
-                style={{
-                  display: "block",
-                  height: "1.5rem",
-                  margin: "auto",
-                  textAlign: "center",
-                  color: "white",
-                }}
+              <div
+                id="display"
+                className="bg-dark w-100 mx-auto my-2"
+                style={{ padding: "5% 0" }}
               >
-                {this.state.currentDrumName}
-              </span>
+                <span
+                  style={{
+                    display: "block",
+                    height: "1.5rem",
+                    margin: "auto",
+                    textAlign: "center",
+                    color: "white",
+                  }}
+                >
+                  {this.state.currentDrumName}
+                </span>
+              </div>
+              <div className="my-3 d-flex justify-content-between align-items-center">
+                <RangeInput
+                  label="Volume"
+                  fontSize={"smaller"}
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  value={this.state.mainVolume}
+                  onChange={this.setMainVolume}
+                />
+                <div
+                  className="text-light text-end"
+                  style={{ width: "25%", fontSize: "smaller" }}
+                >
+                  {this.state.mainVolume}
+                </div>
+              </div>
+              <div className="d-flex justify-content-between align-items-center">
+                <RangeInput
+                  label="Rate"
+                  fontSize={"smaller"}
+                  min={0.25}
+                  max={3}
+                  step={0.25}
+                  value={this.state.mainPlaybackRate}
+                  onChange={this.setMainPlaybackRate}
+                />
+                <div
+                  className="text-light text-end"
+                  style={{ width: "25%", fontSize: "smaller" }}
+                >
+                  {this.state.mainPlaybackRate + "x"}
+                </div>
+              </div>
             </div>
-            <RangeInput
-              label="Vol"
-              min={0}
-              max={1}
-              step={0.1}
-              value={this.state.mainVolume}
-              onChange={this.setMainVolume}
-            />
           </div>
         </div>
       </div>
