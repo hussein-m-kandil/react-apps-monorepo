@@ -59,39 +59,39 @@ class App extends Component {
       switch (event.key) {
         case "q":
         case "Q":
-          this.state.drumPadsObjects["Q"].padRef.current.click();
+          this.state.drumPadsObjects["Q"]?.padRef.current?.click();
           break;
         case "w":
         case "W":
-          this.state.drumPadsObjects["W"].padRef.current.click();
+          this.state.drumPadsObjects["W"]?.padRef.current?.click();
           break;
         case "e":
         case "E":
-          this.state.drumPadsObjects["E"].padRef.current.click();
+          this.state.drumPadsObjects["E"]?.padRef.current?.click();
           break;
         case "a":
         case "A":
-          this.state.drumPadsObjects["A"].padRef.current.click();
+          this.state.drumPadsObjects["A"]?.padRef.current?.click();
           break;
         case "s":
         case "S":
-          this.state.drumPadsObjects["S"].padRef.current.click();
+          this.state.drumPadsObjects["S"]?.padRef.current?.click();
           break;
         case "d":
         case "D":
-          this.state.drumPadsObjects["D"].padRef.current.click();
+          this.state.drumPadsObjects["D"]?.padRef.current?.click();
           break;
         case "z":
         case "Z":
-          this.state.drumPadsObjects["Z"].padRef.current.click();
+          this.state.drumPadsObjects["Z"]?.padRef.current?.click();
           break;
         case "x":
         case "X":
-          this.state.drumPadsObjects["X"].padRef.current.click();
+          this.state.drumPadsObjects["X"]?.padRef.current?.click();
           break;
         case "c":
         case "C":
-          this.state.drumPadsObjects["C"].padRef.current.click();
+          this.state.drumPadsObjects["C"]?.padRef.current?.click();
           break;
       }
     });

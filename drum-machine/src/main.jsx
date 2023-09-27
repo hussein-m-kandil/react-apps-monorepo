@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./App.jsx";
 import "./index.css";
 
-const ASSETS_PATH = "/src/assets/";
+const ASSETS_PATH = "./";
 const DRUMS_DATA = [
   {
     keyName: "Q",

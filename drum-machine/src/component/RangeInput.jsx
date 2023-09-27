@@ -2,6 +2,11 @@ import { Component } from "react";
 import PropTypes from "prop-types";
 
 class RangeInput extends Component {
+  constructor(props) {
+    super(props);
+    this.inputId = this.props.idForLabel.replace("'", "");
+  }
+
   render() {
     return (
       <div
@@ -14,14 +19,14 @@ class RangeInput extends Component {
         }
       >
         <label
-          htmlFor={this.props.idForLabel}
+          htmlFor={this.inputId}
           className="form-label text-light text-center d-block my-0 mx-auto"
           style={{ fontSize: this.props.fontSize ?? "normal" }}
         >
           {this.props.label}
         </label>
         <input
-          id={this.props.idForLabel}
+          id={this.inputId}
           type="range"
           className="form-range d-block my-0 mx-auto ps-2"
           min={this.props.min}
