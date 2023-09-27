@@ -149,6 +149,7 @@ class App extends Component {
               <div className="my-3 d-flex justify-content-between align-items-center">
                 <RangeInput
                   label="Volume"
+                  idForLabel="main-vol"
                   fontSize={"smaller"}
                   min={0}
                   max={1}
@@ -166,6 +167,7 @@ class App extends Component {
               <div className="d-flex justify-content-between align-items-center">
                 <RangeInput
                   label="Rate"
+                  idForLabel="main-rate"
                   fontSize={"smaller"}
                   min={0.25}
                   max={3}

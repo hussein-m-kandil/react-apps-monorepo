@@ -39,27 +39,27 @@ class DrumPad extends Component {
       setPadPlaybackRate: this.setPlaybackRate,
     });
     // Set drum audio
-    this.audio.current.volume = this.state.volume;
+    if (this.audio.current) {
+      this.audio.current.volume = this.state.volume;
+    }
     // Colored flash & drum name
-    this.audio.current.addEventListener("play", () => {
+    this.audio.current?.addEventListener("playing", () => {
       this.props.setCurrentDrumName(this.props.drumName.replace("-", " "));
       this.flashColor();
     });
-    this.audio.current.addEventListener("seeked", () => {
-      setTimeout(() => {
-        if (!this.audio.current.paused) {
-          this.props.setCurrentDrumName(this.props.drumName.replace("-", " "));
-        }
+    this.audio.current?.addEventListener("seeked", () => {
+      if (this.state.loop && !this.audio.current?.paused) {
+        this.props.setCurrentDrumName(this.props.drumName.replace("-", " "));
         this.flashColor();
-      }, 100);
+      }
     });
-    this.audio.current.addEventListener("seeking", () => {
+    this.audio.current?.addEventListener("seeking", () => {
       this.props.setCurrentDrumName("");
     });
-    this.audio.current.addEventListener("pause", () => {
+    this.audio.current?.addEventListener("pause", () => {
       this.props.setCurrentDrumName("");
     });
-    this.audio.current.addEventListener("ended", () => {
+    this.audio.current?.addEventListener("ended", () => {
       this.props.setCurrentDrumName("");
     });
   }
@@ -74,21 +74,21 @@ class DrumPad extends Component {
     const colorClass =
       this.bgClasses[Math.floor(Math.random() * this.bgClasses.length)];
     // Change pad's background from dark into any color (other than dark/light)
-    this.pad.current.classList.remove(this.mainBgClass);
-    this.pad.current.classList.add(colorClass);
+    this.pad.current?.classList.remove(this.mainBgClass);
+    this.pad.current?.classList.add(colorClass);
     // Change pad's background back to the dark color
     setTimeout(() => {
-      this.pad.current.classList.remove(colorClass);
-      this.pad.current.classList.add(this.mainBgClass);
+      this.pad.current?.classList.remove(colorClass);
+      this.pad.current?.classList.add(this.mainBgClass);
     }, 100);
   }
 
   drum() {
     // If playing, then: back to beginning, else: play
-    if (this.audio.current.currentTime > 0.0) {
-      this.audio.current.fastSeek(0.0);
+    if (this.audio.current?.currentTime > 0.0) {
+      this.audio.current.currentTime = 0.0;
     }
-    this.audio.current.play();
+    this.audio.current?.play();
   }
 
   setVolume(val) {
@@ -97,9 +97,11 @@ class DrumPad extends Component {
   }
 
   componentDidUpdate() {
-    this.audio.current.volume = this.state.volume;
-    this.audio.current.playbackRate =
-      this.audio.current.defaultPlaybackRate * this.state.playbackRate;
+    if (this.audio.current) {
+      this.audio.current.volume = this.state.volume;
+      this.audio.current.playbackRate =
+        this.audio.current?.defaultPlaybackRate * this.state.playbackRate;
+    }
   }
 
   render() {
@@ -137,10 +139,11 @@ class DrumPad extends Component {
             style={{ fontSize: "smaller" }}
             onClick={() => {
               this.setState((state) => ({ loop: !state.loop }));
-              if (this.audio.current.currentTime > 0.0) {
-                this.audio.current.pause();
+              if (this.audio.current?.currentTime > 0.0) {
+                this.audio.current?.pause();
               }
             }}
+            aria-pressed={this.state.loop}
           >
             Loop
           </div>
@@ -155,6 +158,7 @@ class DrumPad extends Component {
         </div>
         <RangeInput
           label="V"
+          idForLabel={this.props.drumName + "-vol"}
           fontSize="smaller"
           min={0}
           max={1}
@@ -165,6 +169,7 @@ class DrumPad extends Component {
         />
         <RangeInput
           label="R"
+          idForLabel={this.props.drumName + "-rate"}
           fontSize="smaller"
           min={0.25}
           max={3}

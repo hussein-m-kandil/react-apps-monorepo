@@ -14,13 +14,14 @@ class RangeInput extends Component {
         }
       >
         <label
-          htmlFor="vol-range"
+          htmlFor={this.props.idForLabel}
           className="form-label text-light text-center d-block my-0 mx-auto"
           style={{ fontSize: this.props.fontSize ?? "normal" }}
         >
           {this.props.label}
         </label>
         <input
+          id={this.props.idForLabel}
           type="range"
           className="form-range d-block my-0 mx-auto ps-2"
           min={this.props.min}
@@ -36,6 +37,7 @@ class RangeInput extends Component {
 
 RangeInput.propTypes = {
   label: PropTypes.string.isRequired,
+  idForLabel: PropTypes.string.isRequired,
   min: PropTypes.number.isRequired,
   max: PropTypes.number.isRequired,
   step: PropTypes.number.isRequired,
