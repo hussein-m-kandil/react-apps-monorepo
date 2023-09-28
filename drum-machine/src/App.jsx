@@ -1,6 +1,6 @@
 import { Component } from "react";
 import PropTypes from "prop-types";
-// import { BsArrowCounterclockwise } from "react-icons/bs";
+import { BsArrowCounterclockwise } from "react-icons/bs";
 import DrumPad from "./component/DrumPad";
 import RangeInput from "./component/RangeInput";
 
@@ -203,12 +203,10 @@ class App extends Component {
                 <button
                   className="btn btn-dark rounded-circle text-center p-0"
                   onClick={() => this.resetAllDrumPads()}
-                  // style={{ fontSize: "x-large" }}
-                  style={{ width: "4rem", height: "4rem" }}
+                  style={{ width: "3rem", height: "3rem", fontSize: "x-large" }}
                 >
-                  {/* <BsArrowCounterclockwise /> */}
-                  Reset
-                  {/* <span className="visually-hidden">Reset</span> */}
+                  <BsArrowCounterclockwise />
+                  <span className="visually-hidden">Reset</span>
                 </button>
               </div>
             </div>

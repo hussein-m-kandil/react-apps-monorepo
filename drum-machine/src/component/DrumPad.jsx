@@ -130,7 +130,7 @@ class DrumPad extends Component {
           <audio
             id={this.props.drumKey}
             className="clip"
-            src={this.props.drumURL}
+            src={this.props.drumFile}
             ref={this.audio}
             preload="auto"
             loop={this.state.loop}
