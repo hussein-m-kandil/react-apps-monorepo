@@ -27,6 +27,7 @@ class DrumPad extends Component {
     this.setVolume = this.setVolume.bind(this);
     this.setPlaybackRate = this.setPlaybackRate.bind(this);
     this.flashColor = this.flashColor.bind(this);
+    this.setLoop = this.setLoop.bind(this);
   }
 
   componentDidMount() {
@@ -37,6 +38,8 @@ class DrumPad extends Component {
       setPadVol: this.setVolume,
       getPadPlaybackRate: () => this.state.playbackRate,
       setPadPlaybackRate: this.setPlaybackRate,
+      getLoop: () => this.state.loop,
+      setLoop: this.setLoop,
     });
     // Set drum audio
     if (this.audio.current) {
@@ -62,6 +65,13 @@ class DrumPad extends Component {
     this.audio.current?.addEventListener("ended", () => {
       this.props.setCurrentDrumName("");
     });
+  }
+
+  setLoop(loop) {
+    this.setState({ loop: loop });
+    if (this.audio.current?.currentTime > 0.0) {
+      this.audio.current?.pause();
+    }
   }
 
   setPlaybackRate(rate) {
@@ -137,12 +147,7 @@ class DrumPad extends Component {
             role="button"
             className={this.state.loop ? "text-light " : "text-secondary "}
             style={{ fontSize: "smaller" }}
-            onClick={() => {
-              this.setState((state) => ({ loop: !state.loop }));
-              if (this.audio.current?.currentTime > 0.0) {
-                this.audio.current?.pause();
-              }
-            }}
+            onClick={() => this.setLoop(!this.state.loop)}
             aria-pressed={this.state.loop}
           >
             Loop

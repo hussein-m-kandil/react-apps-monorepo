@@ -19,6 +19,7 @@ class App extends Component {
     this.setCurrentDrumName = this.setCurrentDrumName.bind(this);
     this.setMainVolume = this.setMainVolume.bind(this);
     this.setMainPlaybackRate = this.setMainPlaybackRate.bind(this);
+    this.resetAllDrumPads = this.resetAllDrumPads.bind(this);
   }
 
   setMainPlaybackRate(rate) {
@@ -41,6 +42,17 @@ class App extends Component {
     for (const drumKey in this.state.drumPadsObjects) {
       this.state.drumPadsObjects[drumKey].setPadVol(vol);
     }
+  }
+
+  resetAllDrumPads() {
+    // Turn off loop for all drum pads
+    for (const drumKey in this.state.drumPadsObjects) {
+      this.state.drumPadsObjects[drumKey].setLoop(false);
+    }
+    // Reset the volume of all drum pads
+    this.setMainVolume(0.5);
+    // Reset the playback rate of all drum pads
+    this.setMainPlaybackRate(1);
   }
 
   setCurrentDrumName(drumName) {
@@ -188,8 +200,12 @@ class App extends Component {
                 </div>
               </div>
               <div className="m-auto my-3">
-                <button className="btn btn-dark rounded-circle text-center">
-                  <FaArrowRotateLeft />
+                <button
+                  className="btn btn-dark rounded-circle text-center"
+                  onClick={() => this.resetAllDrumPads()}
+                >
+                  <FaArrowRotateLeft />{" "}
+                  <span className="visually-hidden">Reset</span>
                 </button>
               </div>
             </div>
