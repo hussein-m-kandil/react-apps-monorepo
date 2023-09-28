@@ -1,5 +1,6 @@
 import { Component } from "react";
 import PropTypes from "prop-types";
+import { FaArrowRotateLeft } from "react-icons/fa6";
 import DrumPad from "./component/DrumPad";
 import RangeInput from "./component/RangeInput";
 
@@ -98,32 +99,36 @@ class App extends Component {
   }
 
   render() {
+    const drumPads = this.props.drumsData.map((drum) => {
+      return (
+        <div key={drum.keyName} className="col">
+          <DrumPad
+            drumKey={drum.keyName}
+            drumName={drum.drumName}
+            drumFile={this.props.assetsPath + drum.fileName}
+            drumURL={drum.fileURL}
+            defaultVol={this.state.mainVolume}
+            defaultPlaybackRate={this.state.mainPlaybackRate}
+            refDrumPad={this.refDrumPad}
+            setCurrentDrumName={this.setCurrentDrumName}
+          />
+        </div>
+      );
+    });
     return (
       <div className="container">
+        <h1 className="text-center my-3">
+          <strong>Drum Machine</strong>
+        </h1>
         <div
           id="drum-machine"
           className="row bg-secondary rounded-2 m-0 my-3 mt-md-4 mx-auto
           col-sm-11 col-md-10 col-lg-8 col-xl-6 col-xxl-5"
         >
-          <div className={"col-12 col-md-8 row row-cols-3 g-2 pb-2 m-0"}>
-            {this.props.drumsData.map((drum) => {
-              return (
-                <div key={drum.keyName} className="col">
-                  <DrumPad
-                    drumKey={drum.keyName}
-                    drumName={drum.drumName}
-                    drumFile={this.props.assetsPath + drum.fileName}
-                    drumURL={drum.fileURL}
-                    defaultVol={this.state.mainVolume}
-                    defaultPlaybackRate={this.state.mainPlaybackRate}
-                    refDrumPad={this.refDrumPad}
-                    setCurrentDrumName={this.setCurrentDrumName}
-                  />
-                </div>
-              );
-            })}
+          <div className="col-12 col-md-8 row row-cols-3 g-3 pb-3 m-0">
+            {drumPads}
           </div>
-          <div className={"col-12 col-md-4 py-3 py-md-auto"}>
+          <div className="col-12 col-md-4 py-3 py-md-auto px-3">
             <div
               className={
                 "w-100 h-100 d-flex flex-column justify-content-center align-items-stretch"
@@ -181,6 +186,11 @@ class App extends Component {
                 >
                   {this.state.mainPlaybackRate + "x"}
                 </div>
+              </div>
+              <div className="m-auto my-3">
+                <button className="btn btn-dark rounded-circle text-center">
+                  <FaArrowRotateLeft />
+                </button>
               </div>
             </div>
           </div>

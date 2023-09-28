@@ -1,5 +1,3 @@
-@import url("./index.scss");
-
 :root {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -16,6 +14,10 @@
 body {
   margin: 0;
   padding: 0;
+}
+
+h1 {
+  color: rgb(50, 70, 90);
 }
 
 #drum-machine {
