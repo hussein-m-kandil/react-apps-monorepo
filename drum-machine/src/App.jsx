@@ -1,6 +1,6 @@
 import { Component } from "react";
 import PropTypes from "prop-types";
-import { FaArrowRotateLeft } from "react-icons/fa6";
+// import { BsArrowCounterclockwise } from "react-icons/bs";
 import DrumPad from "./component/DrumPad";
 import RangeInput from "./component/RangeInput";
 
@@ -201,11 +201,14 @@ class App extends Component {
               </div>
               <div className="m-auto my-3">
                 <button
-                  className="btn btn-dark rounded-circle text-center"
+                  className="btn btn-dark rounded-circle text-center p-0"
                   onClick={() => this.resetAllDrumPads()}
+                  // style={{ fontSize: "x-large" }}
+                  style={{ width: "4rem", height: "4rem" }}
                 >
-                  <FaArrowRotateLeft />{" "}
-                  <span className="visually-hidden">Reset</span>
+                  {/* <BsArrowCounterclockwise /> */}
+                  Reset
+                  {/* <span className="visually-hidden">Reset</span> */}
                 </button>
               </div>
             </div>
