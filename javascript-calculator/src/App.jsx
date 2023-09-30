@@ -7,8 +7,8 @@ class App extends Component {
       <div className="container">
         <div
           className={
-            "row mt-5 mb-3 mx-auto pb-1 rounded-3 bg-warning " +
-            "col-12 col-sm-10 col-md-8 col-md-6 col-lg-4"
+            "row my-3 mx-auto p-1 pb-2 rounded-3 bg-warning " +
+            "col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4"
           }
         >
           <Calculator />

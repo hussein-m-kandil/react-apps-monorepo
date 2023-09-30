@@ -33,7 +33,10 @@ class Calculator extends Component {
       <Fragment>
         <div className="row p-0 m-0 g-2">
           <div className="col-12">
-            <CalcMainScreen text={this.state.mainScreenValue} />
+            <CalcMainScreen
+              text={this.state.mainScreenValue}
+              ops={this.state.mainScreenValue}
+            />
           </div>
           <div className="col-3">
             <CalcButton text="+" onClick={this.onCalcButtonClick} />
