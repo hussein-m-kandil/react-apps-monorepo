@@ -1,24 +1,21 @@
-import { useState } from "react";
-import "./App.css";
+import { Component } from "react";
+import Calculator from "./components/Calculator";
 
-function App() {
-  const [count, setCount] = useState(0);
-
-  return (
-    <div className="container">
-      <div className="row">
-        <div className="position-absolute top-50 start-50 translate-middle w-100">
-          <h1>Counter App</h1>
-          <button
-            className="btn btn-dark text-danger fs-3 d-block mx-auto my-5 p-3"
-            onClick={() => setCount((count) => count + 1)}
-          >
-            count is&nbsp;<span className="text-warning">{count}</span>
-          </button>
+class App extends Component {
+  render() {
+    return (
+      <div className="container">
+        <div
+          className={
+            "row mt-5 mb-3 mx-auto pb-1 rounded-3 bg-warning " +
+            "col-12 col-sm-10 col-md-8 col-md-6 col-lg-4"
+          }
+        >
+          <Calculator />
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default App;
