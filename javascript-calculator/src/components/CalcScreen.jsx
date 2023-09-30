@@ -1,7 +1,7 @@
 import { Component } from "react";
 import PropTypes from "prop-types";
 
-class CalcMainScreen extends Component {
+class CalcScreen extends Component {
   render() {
     return (
       <div className="bg-dark rounded-2 text-light text-end p-2">
@@ -15,7 +15,6 @@ class CalcMainScreen extends Component {
           }}
         >
           <span className="text-wrap text-break overflow-auto">
-            1+2*3/3=3
             {this.props.ops}
           </span>
         </div>
@@ -29,7 +28,6 @@ class CalcMainScreen extends Component {
           }}
         >
           <span className="text-wrap text-break overflow-auto">
-            1+2*3/4
             {this.props.text}
           </span>
         </div>
@@ -38,9 +36,9 @@ class CalcMainScreen extends Component {
   }
 }
 
-CalcMainScreen.propTypes = {
+CalcScreen.propTypes = {
   ops: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
 };
 
-export default CalcMainScreen;
+export default CalcScreen;
