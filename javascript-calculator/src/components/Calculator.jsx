@@ -5,16 +5,20 @@ import CalcScreen from "./CalcScreen";
 const ENTRIES = {
   EQUAL: "=",
   DECIMAL_POINT: ".",
+  PARENTHESES: {
+    START: "(",
+    END: ")",
+  },
   NUMBERS: {
-    ONE: "1",
-    TWO: "2",
-    THREE: "3",
-    FOUR: "4",
-    FIVE: "5",
-    SIX: "6",
     SEVEN: "7",
     EIGHT: "8",
     NINE: "9",
+    FOUR: "4",
+    FIVE: "5",
+    SIX: "6",
+    ONE: "1",
+    TWO: "2",
+    THREE: "3",
     ZERO: "0",
   },
   OPERATORS: {
@@ -39,17 +43,58 @@ class Calculator extends Component {
       operation: "1+2*3/4",
     };
     // This bindings to methods
+    this.enterParentheses = this.enterParentheses.bind(this);
+    this.enterOperator = this.enterOperator.bind(this);
+    this.enterDecimalPoint = this.enterDecimalPoint.bind(this);
     this.enterZero = this.enterZero.bind(this);
     this.ClearAll = this.ClearAll.bind(this);
     this.clearInput = this.clearInput.bind(this);
     this.clearEntry = this.clearEntry.bind(this);
-    this.addToOperation = this.addToOperation.bind(this);
+    this.addEntry = this.addEntry.bind(this);
     this.onCalcButtonClick = this.onCalcButtonClick.bind(this);
+  }
+
+  enterParentheses(value) {
+    this.setState((state) => {
+      const startCount = state.operation.match(/\(/g)?.length ?? 0;
+      const endCount = state.operation.match(/\)/g)?.length ?? 0;
+      const notEndEmpty = /[^(]/.test(
+        state.operation[state.operation.length - 1]
+      );
+      if (
+        value === "(" ||
+        (value === ")" && endCount < startCount && notEndEmpty)
+      ) {
+        return { operation: state.operation + value };
+      }
+    });
+  }
+
+  enterOperator(operator) {
+    this.setState((state) => {
+      const regex = /[^*/+-]/;
+      const opLen = state.operation.length;
+      if (
+        (opLen > 0 && regex.test(state.operation[opLen - 1])) ||
+        (opLen === 0 && operator === "-")
+      ) {
+        return { operation: state.operation + operator };
+      }
+    });
+  }
+
+  enterDecimalPoint() {
+    this.setState((state) => {
+      const regex = /^(-?\d+|(((-?\d+|-?\d+\.\d+)[*/+-])+(\d+|\(-\d+\))))$/;
+      if (regex.test(state.operation) && state.operation.length > 0) {
+        return { operation: state.operation + "." };
+      }
+    });
   }
 
   enterZero() {
     this.setState((state) => {
-      if (state.operation.slice(state.operation.length - 1) !== "0") {
+      if (state.operation.length > 0) {
         return {
           operation: state.operation + "0",
         };
@@ -58,11 +103,11 @@ class Calculator extends Component {
   }
 
   ClearAll() {
-    this.setState({ operation: "0", lastOps: "" });
+    this.setState({ operation: "", lastOps: "" });
   }
 
   clearInput() {
-    this.setState({ operation: "0" });
+    this.setState({ operation: "" });
   }
 
   clearEntry() {
@@ -73,12 +118,12 @@ class Calculator extends Component {
         };
       }
       return {
-        operation: "0",
+        operation: "",
       };
     });
   }
 
-  addToOperation(value) {
+  addEntry(value) {
     this.setState((state) => ({
       operation: state.operation + value,
     }));
@@ -98,10 +143,18 @@ class Calculator extends Component {
       case ENTRIES.NUMBERS.ZERO:
         this.enterZero();
         break;
+      case ENTRIES.DECIMAL_POINT:
+        this.enterDecimalPoint();
+        break;
+      case ENTRIES.PARENTHESES.START:
+      case ENTRIES.PARENTHESES.END:
+        this.enterParentheses(value);
+        break;
       case ENTRIES.OPERATORS.ADD:
       case ENTRIES.OPERATORS.SUBTRACT:
       case ENTRIES.OPERATORS.MULTIPLY:
       case ENTRIES.OPERATORS.DIVIDE:
+        this.enterOperator(value);
         break;
       case ENTRIES.NUMBERS.ONE:
       case ENTRIES.NUMBERS.TWO:
@@ -112,7 +165,7 @@ class Calculator extends Component {
       case ENTRIES.NUMBERS.SEVEN:
       case ENTRIES.NUMBERS.EIGHT:
       case ENTRIES.NUMBERS.NINE:
-        this.addToOperation(value);
+        this.addEntry(value);
         break;
     }
   }
@@ -177,14 +230,26 @@ class Calculator extends Component {
               onClick={this.onCalcButtonClick}
             />
           </div>
-          {numButtons}
+          <div className="col-4">
+            <CalcButton
+              text={ENTRIES.PARENTHESES.START}
+              onClick={this.onCalcButtonClick}
+            />
+          </div>
+          <div className="col-4">
+            <CalcButton
+              text={ENTRIES.PARENTHESES.END}
+              onClick={this.onCalcButtonClick}
+            />
+          </div>
           <div className="col-4">
             <CalcButton
               text={ENTRIES.DECIMAL_POINT}
               onClick={this.onCalcButtonClick}
             />
           </div>
-          <div className="col-4">
+          {numButtons}
+          <div className="col-8">
             <CalcButton text={ENTRIES.EQUAL} onClick={this.onCalcButtonClick} />
           </div>
         </div>

@@ -15,7 +15,7 @@ class CalcScreen extends Component {
           }}
         >
           <span className="text-wrap text-break overflow-auto">
-            {this.props.ops}
+            {this.props.ops.length > 0 ? this.props.ops : "0"}
           </span>
         </div>
         <div
@@ -28,7 +28,7 @@ class CalcScreen extends Component {
           }}
         >
           <span className="text-wrap text-break overflow-auto">
-            {this.props.text}
+            {this.props.text.length > 0 ? this.props.text : "0"}
           </span>
         </div>
       </div>
