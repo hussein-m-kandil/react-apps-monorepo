@@ -39,10 +39,12 @@ class Calculator extends Component {
     super(props);
     // State
     this.state = {
-      lastOps: "1+2*3/3=3",
-      operation: "1+2*3/4",
+      lastOps: "",
+      operation: "",
+      solution: false,
     };
     // This bindings to methods
+    this.evaluate = this.evaluate.bind(this);
     this.enterParentheses = this.enterParentheses.bind(this);
     this.enterOperator = this.enterOperator.bind(this);
     this.enterDecimalPoint = this.enterDecimalPoint.bind(this);
@@ -52,6 +54,56 @@ class Calculator extends Component {
     this.clearEntry = this.clearEntry.bind(this);
     this.addEntry = this.addEntry.bind(this);
     this.onCalcButtonClick = this.onCalcButtonClick.bind(this);
+  }
+
+  componentDidUpdate() {
+    // Put any negative number, found after any operator, in parentheses
+    const oldOps = this.state.lastOps;
+    let ops = "";
+    let hasMinusAfterOperator = false;
+    for (let i = 0; i < oldOps.length; i++) {
+      if (
+        oldOps[i] === "-" &&
+        /[*/+-]/.test(oldOps[i - 1]) &&
+        /\d/.test(oldOps[i + 1])
+      ) {
+        hasMinusAfterOperator = true;
+        ops += `(${oldOps[i]}${oldOps[i + 1]})`;
+        i++;
+        continue;
+      }
+      ops += oldOps[i];
+    }
+    if (hasMinusAfterOperator) {
+      this.setState({ lastOps: ops });
+    }
+  }
+
+  evaluate() {
+    this.setState((state) => {
+      if (state.lastOps.length > 0) {
+        const op = /[^*/+-]/.test(state.lastOps[state.lastOps.length - 1])
+          ? state.lastOps
+          : state.lastOps.slice(0, state.lastOps.length - 1);
+        let solution;
+        try {
+          solution = eval?.(op);
+        } catch (error) {
+          solution = "Error!";
+        }
+        // If invalid expression, 'eval' returns the same given input as it is
+        if (solution === state.lastOps || solution === "Error!") {
+          return { lastOps: "Error!", operation: "Error!", solution: false };
+        } else if (solution) {
+          return {
+            // lastOps: state.lastOps + op,
+            operation: solution.toString(),
+            solution: true,
+          };
+        }
+      }
+      return {};
+    });
   }
 
   enterParentheses(value) {
@@ -65,7 +117,10 @@ class Calculator extends Component {
         value === "(" ||
         (value === ")" && endCount < startCount && notEndEmpty)
       ) {
-        return { operation: state.operation + value };
+        return {
+          lastOps: state.lastOps + value,
+          operation: state.operation + value,
+        };
       }
     });
   }
@@ -73,12 +128,22 @@ class Calculator extends Component {
   enterOperator(operator) {
     this.setState((state) => {
       const regex = /[^*/+-]/;
-      const opLen = state.operation.length;
+      const regex2 = /\d[*/+-]/;
+      const opLen = state.lastOps.length;
       if (
-        (opLen > 0 && regex.test(state.operation[opLen - 1])) ||
-        (opLen === 0 && operator === "-")
+        (opLen > 0 && regex.test(state.lastOps[opLen - 1])) ||
+        (opLen === 0 && operator === "-") ||
+        (opLen > 0 &&
+          operator === "-" &&
+          regex2.test(state.lastOps.slice(opLen - 2)))
       ) {
-        return { operation: state.operation + operator };
+        return {
+          lastOps: state.solution
+            ? state.operation + operator
+            : state.lastOps + operator,
+          operation: operator,
+          solution: false,
+        };
       }
     });
   }
@@ -87,7 +152,10 @@ class Calculator extends Component {
     this.setState((state) => {
       const regex = /^(-?\d+|(((-?\d+|-?\d+\.\d+)[*/+-])+(\d+|\(-\d+\))))$/;
       if (regex.test(state.operation) && state.operation.length > 0) {
-        return { operation: state.operation + "." };
+        return {
+          lastOps: state.lastOps + ".",
+          operation: state.operation + ".",
+        };
       }
     });
   }
@@ -96,6 +164,7 @@ class Calculator extends Component {
     this.setState((state) => {
       if (state.operation.length > 0) {
         return {
+          lastOps: state.lastOps + "0",
           operation: state.operation + "0",
         };
       }
@@ -103,30 +172,52 @@ class Calculator extends Component {
   }
 
   ClearAll() {
-    this.setState({ operation: "", lastOps: "" });
+    this.setState({ lastOps: "", operation: "", solution: false });
   }
 
   clearInput() {
-    this.setState({ operation: "" });
+    this.setState((state) => {
+      return {
+        lastOps:
+          state.lastOps.length > state.operation.length
+            ? state.lastOps.slice(0, state.operation.length)
+            : state.lastOps,
+        operation: "",
+        solution: false,
+      };
+    });
   }
 
   clearEntry() {
     this.setState((state) => {
       if (state.operation.length > 1) {
         return {
+          lastOps: state.lastOps.slice(0, state.lastOps.length - 1),
           operation: state.operation.slice(0, state.operation.length - 1),
         };
       }
       return {
+        lastOps:
+          state.lastOps.length > 1
+            ? state.lastOps.slice(0, state.lastOps.length - 1)
+            : "",
         operation: "",
       };
     });
   }
 
   addEntry(value) {
-    this.setState((state) => ({
-      operation: state.operation + value,
-    }));
+    this.setState((state) => {
+      return {
+        lastOps: state.lastOps + value,
+        operation: /[^*/+-]/.test(
+          state.operation.slice(state.operation.length - 1)
+        )
+          ? state.operation + value
+          : value,
+        solution: false,
+      };
+    });
   }
 
   onCalcButtonClick(value) {
@@ -167,6 +258,9 @@ class Calculator extends Component {
       case ENTRIES.NUMBERS.NINE:
         this.addEntry(value);
         break;
+      case ENTRIES.EQUAL:
+        this.evaluate();
+        break;
     }
   }
 
@@ -186,7 +280,11 @@ class Calculator extends Component {
       <Fragment>
         <div className="row p-0 m-0 g-2">
           <div className="col-12">
-            <CalcScreen text={this.state.operation} ops={this.state.lastOps} />
+            <CalcScreen
+              currentOp={this.state.operation}
+              lastOps={this.state.lastOps}
+              solution={this.state.solution}
+            />
           </div>
           <div className="col-4">
             <CalcButton

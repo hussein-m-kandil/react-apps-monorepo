@@ -8,27 +8,28 @@ class CalcScreen extends Component {
         <div
           className="text-secondary"
           style={{
-            minHeight: "2rem",
-            fontFamily: "digital-7-italic, monospace, sans-serif",
-            fontSize: "1rem",
-            lineHeight: "1rem",
+            minHeight: "3rem",
+            fontSize: "1.2rem",
+            lineHeight: "1.2rem",
           }}
         >
-          <span className="text-wrap text-break overflow-auto">
-            {this.props.ops.length > 0 ? this.props.ops : "0"}
+          <span className="text-wrap text-break">
+            {this.props.lastOps.length > 0
+              ? this.props.lastOps +
+                (this.props.solution ? "=" + this.props.currentOp : "")
+              : "0"}
           </span>
         </div>
         <div
           className="d-flex flex-column justify-content-end"
           style={{
-            minHeight: "5rem",
-            fontFamily: "digital-7, monospace, sans-serif",
-            fontSize: "2.5rem",
-            lineHeight: "2.5rem",
+            minHeight: "4rem",
+            fontSize: "2rem",
+            lineHeight: "2rem",
           }}
         >
-          <span className="text-wrap text-break overflow-auto">
-            {this.props.text.length > 0 ? this.props.text : "0"}
+          <span className="text-wrap text-break">
+            {this.props.currentOp.length > 0 ? this.props.currentOp : "0"}
           </span>
         </div>
       </div>
@@ -37,8 +38,9 @@ class CalcScreen extends Component {
 }
 
 CalcScreen.propTypes = {
-  ops: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
+  lastOps: PropTypes.string.isRequired,
+  currentOp: PropTypes.string.isRequired,
+  solution: PropTypes.bool.isRequired,
 };
 
 export default CalcScreen;
