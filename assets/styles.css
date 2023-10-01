@@ -1,1 +1,7 @@
 @import "./css/bootstrap.min.css";
+
+.btn:focus-visible,
+.btn:focus-within,
+.btn:focus {
+    background-color: var(--bs-dark);
+}
