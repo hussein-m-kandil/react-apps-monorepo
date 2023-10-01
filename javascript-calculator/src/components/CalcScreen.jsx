@@ -28,7 +28,7 @@ class CalcScreen extends Component {
             lineHeight: "2rem",
           }}
         >
-          <span className="text-wrap text-break">
+          <span id="display" className="text-wrap text-break">
             {this.props.currentOp.length > 0 ? this.props.currentOp : "0"}
           </span>
         </div>

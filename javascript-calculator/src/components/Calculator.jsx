@@ -57,10 +57,16 @@ class Calculator extends Component {
   }
 
   componentDidUpdate() {
-    // Put any negative number, found after any operator, in parentheses
-    const oldOps = this.state.lastOps;
+    let oldOps = this.state.lastOps;
     let ops = "";
     let hasMinusAfterOperator = false;
+    let hasOperatorAtTheEnd = false;
+    // Remove any operator at the end
+    if (/[*/+-]/.test(oldOps[oldOps.length - 1]) && this.state.solution) {
+      hasOperatorAtTheEnd = true;
+      oldOps = oldOps.slice(0, oldOps.length - 1);
+    }
+    // Put any negative number, found after any operator, in parentheses
     for (let i = 0; i < oldOps.length; i++) {
       if (
         oldOps[i] === "-" &&
@@ -74,7 +80,7 @@ class Calculator extends Component {
       }
       ops += oldOps[i];
     }
-    if (hasMinusAfterOperator) {
+    if (hasMinusAfterOperator || hasOperatorAtTheEnd) {
       this.setState({ lastOps: ops });
     }
   }
@@ -95,9 +101,17 @@ class Calculator extends Component {
         if (solution === state.lastOps || solution === "Error!") {
           return { lastOps: "Error!", operation: "Error!", solution: false };
         } else if (solution) {
+          solution = solution.toString();
+          // Round to at most 12 digits
+          if (solution.includes(".")) {
+            const arr = solution.split(".");
+            if (arr[1].length > 12) {
+              solution = Number(solution).toFixed(12).toString();
+            }
+          }
           return {
             // lastOps: state.lastOps + op,
-            operation: solution.toString(),
+            operation: solution,
             solution: true,
           };
         }
@@ -270,6 +284,7 @@ class Calculator extends Component {
       numButtons.push(
         <div key={numKey} className="col-4">
           <CalcButton
+            id={numKey.toLowerCase()}
             text={ENTRIES.NUMBERS[numKey]}
             onClick={this.onCalcButtonClick}
           />
@@ -288,67 +303,81 @@ class Calculator extends Component {
           </div>
           <div className="col-4">
             <CalcButton
+              id="clear-entry"
               text={ENTRIES.ACTIONS.CLEAR_ENTRY}
               onClick={this.onCalcButtonClick}
             />
           </div>
           <div className="col-4">
             <CalcButton
+              id="clear-input"
               text={ENTRIES.ACTIONS.CLEAR}
               onClick={this.onCalcButtonClick}
             />
           </div>
           <div className="col-4">
             <CalcButton
+              id="clear"
               text={ENTRIES.ACTIONS.ALL_CLEAR}
               onClick={this.onCalcButtonClick}
             />
           </div>
           <div className="col-3">
             <CalcButton
+              id="add"
               text={ENTRIES.OPERATORS.ADD}
               onClick={this.onCalcButtonClick}
             />
           </div>
           <div className="col-3">
             <CalcButton
+              id="subtract"
               text={ENTRIES.OPERATORS.SUBTRACT}
               onClick={this.onCalcButtonClick}
             />
           </div>
           <div className="col-3">
             <CalcButton
+              id="multiply"
               text={ENTRIES.OPERATORS.MULTIPLY}
               onClick={this.onCalcButtonClick}
             />
           </div>
           <div className="col-3">
             <CalcButton
+              id="divide"
               text={ENTRIES.OPERATORS.DIVIDE}
               onClick={this.onCalcButtonClick}
             />
           </div>
           <div className="col-4">
             <CalcButton
+              id="parentheses-start"
               text={ENTRIES.PARENTHESES.START}
               onClick={this.onCalcButtonClick}
             />
           </div>
           <div className="col-4">
             <CalcButton
+              id="parentheses-end"
               text={ENTRIES.PARENTHESES.END}
               onClick={this.onCalcButtonClick}
             />
           </div>
           <div className="col-4">
             <CalcButton
+              id="decimal"
               text={ENTRIES.DECIMAL_POINT}
               onClick={this.onCalcButtonClick}
             />
           </div>
           {numButtons}
           <div className="col-8">
-            <CalcButton text={ENTRIES.EQUAL} onClick={this.onCalcButtonClick} />
+            <CalcButton
+              id="equals"
+              text={ENTRIES.EQUAL}
+              onClick={this.onCalcButtonClick}
+            />
           </div>
         </div>
       </Fragment>

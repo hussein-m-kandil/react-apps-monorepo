@@ -5,6 +5,7 @@ class CalcButton extends Component {
   render() {
     return (
       <button
+        id={this.props.id}
         className="btn btn-dark w-100"
         style={{ minHeight: "4rem", minWidth: "2rem", fontSize: "x-large" }}
         onClick={() => this.props.onClick(this.props.text)}
@@ -16,6 +17,7 @@ class CalcButton extends Component {
 }
 
 CalcButton.propTypes = {
+  id: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
 };
