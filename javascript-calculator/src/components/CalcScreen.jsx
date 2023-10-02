@@ -8,17 +8,14 @@ class CalcScreen extends Component {
         <div
           className={this.props.error ? " text-danger" : " text-secondary"}
           style={{
-            minHeight: "3rem",
+            minHeight: "2rem",
             fontSize: "1.2rem",
             lineHeight: "1.2rem",
             opacity: this.props.error ? "0.5" : "1",
           }}
         >
           <span className="text-wrap text-break">
-            {this.props.lastOps.length > 0
-              ? this.props.lastOps +
-                (this.props.solution ? "=" + this.props.currentOp : "")
-              : "0"}
+            {this.props.lastOps.length > 0 ? this.props.lastOps : "0"}
           </span>
         </div>
         <div
@@ -27,7 +24,7 @@ class CalcScreen extends Component {
             (this.props.error ? " text-danger" : " text-light")
           }
           style={{
-            minHeight: "4rem",
+            minHeight: "3rem",
             fontSize: "2rem",
             lineHeight: "2rem",
           }}

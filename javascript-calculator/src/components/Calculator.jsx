@@ -61,26 +61,27 @@ class Calculator extends Component {
 
   componentDidUpdate() {
     let oldOps = this.state.lastOps;
-    let hasMinusAfterOperator = false;
     let hasOperatorAtTheEnd = false;
     // Remove any operator at the end
-    if (/[*/+-]/.test(oldOps[oldOps.length - 1]) && this.state.solution) {
-      hasOperatorAtTheEnd = true;
-      oldOps = oldOps.slice(0, oldOps.length - 1);
-    }
-    // Put any negative number, found after any operator, in parentheses
-    const ops = oldOps.replaceAll(
-      /[*/+-](-\d+|\(-(\d+|\d+\.\d*)\)(\.|\d+))/g,
-      (matched) => {
-        const op = matched[0];
-        matched = matched.replaceAll(/[)(]/g, "").slice(1);
-        return op + "(" + matched + ")";
+    if (this.state.solution) {
+      oldOps = oldOps.replaceAll(/[*/+-]+=/g, "=");
+      if (this.state.lastOps !== oldOps) {
+        hasOperatorAtTheEnd = true;
       }
-    );
-    if (ops !== oldOps && !hasOperatorAtTheEnd) {
-      hasMinusAfterOperator = true;
     }
-    if (hasMinusAfterOperator || hasOperatorAtTheEnd) {
+    // Remove multiple consecutive operators, except for '-'.
+    let hasSequenceOfOperators = false;
+    const ops = oldOps.replaceAll(/[*/+-][*/+-]+/g, (match) => {
+      return match[match.length - 1] === "-"
+        ? match.slice(match.length - 2)
+        : match[match.length - 1];
+    });
+    if (ops !== oldOps) {
+      hasSequenceOfOperators = true;
+    }
+    // Set the state only if there is a change,
+    // to avoid infinite loop of state setting.
+    if (hasOperatorAtTheEnd || hasSequenceOfOperators) {
       this.setState({ lastOps: ops });
     }
   }
@@ -104,18 +105,20 @@ class Calculator extends Component {
             solution: false,
             error: true,
           };
-        } else if (solution) {
-          solution = solution.toString();
+        } else {
+          solution = solution?.toString();
           // Round to at most 12 digits
-          if (solution.includes(".")) {
+          if (solution?.includes(".")) {
             const arr = solution.split(".");
             if (arr[1].length > 7) {
               solution = Number(solution).toFixed(7).toString();
             }
           }
           return {
+            lastOps: state.lastOps + "=" + solution,
             operation: solution,
             solution: true,
+            error: false,
           };
         }
       }
@@ -127,14 +130,18 @@ class Calculator extends Component {
     this.setState((state) => {
       const startCount = state.lastOps.match(/\(/g)?.length ?? 0;
       const endCount = state.lastOps.match(/\)/g)?.length ?? 0;
-      const notEndEmpty = /[^(]/.test(state.lastOps[state.lastOps.length - 1]);
+      const notEndEmpty = /[^(*/+-]/.test(
+        state.lastOps[state.lastOps.length - 1]
+      );
       if (
         value === "(" ||
         (value === ")" && endCount < startCount && notEndEmpty)
       ) {
         return {
-          lastOps: state.lastOps + value,
+          lastOps: !state.solution ? state.lastOps + value : value,
           operation: value,
+          solution: false,
+          error: false,
         };
       }
     });
@@ -158,12 +165,12 @@ class Calculator extends Component {
             : state.lastOps + operator,
           operation: operator,
           solution: false,
+          error: false,
         };
       } else if (opLen > 0 && !regex.test(state.lastOps[opLen - 1])) {
         return {
           lastOps: state.lastOps.slice(0, opLen - 1) + operator,
           operation: operator,
-          solution: false,
         };
       }
     });
@@ -175,8 +182,10 @@ class Calculator extends Component {
         /^(-?\(?\d+\)?|(((\(?-?\d+\)?|\(?-?\d+\.\d+\)?)[*/+-])+(\(?-?\d+\)?)))$/;
       if (regex.test(state.operation) && state.operation.length > 0) {
         return {
-          lastOps: state.lastOps + ".",
-          operation: state.operation + ".",
+          lastOps: !state.solution ? state.lastOps + "." : "0.",
+          operation: !state.solution ? state.operation + "." : "0.",
+          solution: false,
+          error: false,
         };
       }
     });
@@ -244,13 +253,14 @@ class Calculator extends Component {
   addEntry(value) {
     this.setState((state) => {
       return {
-        lastOps: !state.solution ? state.lastOps + value : value,
+        lastOps: state.solution ? value : state.lastOps + value,
         operation:
           /[^)*/+-]/.test(state.operation.slice(state.operation.length - 1)) &&
           !state.solution
             ? state.operation + value
             : value,
         solution: false,
+        error: false,
       };
     });
   }

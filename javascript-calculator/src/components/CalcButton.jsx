@@ -7,7 +7,7 @@ class CalcButton extends Component {
       <button
         id={this.props.id}
         className="btn btn-dark w-100"
-        style={{ minHeight: "4rem", minWidth: "2rem", fontSize: "x-large" }}
+        style={{ fontSize: "x-large" }}
         onClick={() => this.props.onClick(this.props.text)}
       >
         {this.props.text}
