@@ -28,7 +28,6 @@ const ENTRIES = {
     DIVIDE: "/",
   },
   ACTIONS: {
-    CLEAR: "C",
     CLEAR_ENTRY: "CE",
     ALL_CLEAR: "AC",
   },
@@ -53,10 +52,16 @@ class Calculator extends Component {
     this.enterDecimalPoint = this.enterDecimalPoint.bind(this);
     this.enterZero = this.enterZero.bind(this);
     this.ClearAll = this.ClearAll.bind(this);
-    this.clearInput = this.clearInput.bind(this);
     this.clearEntry = this.clearEntry.bind(this);
     this.addEntry = this.addEntry.bind(this);
     this.onCalcButtonClick = this.onCalcButtonClick.bind(this);
+  }
+
+  componentDidMount() {
+    document.addEventListener("keydown", (e) => {
+      e.preventDefault();
+      this.onCalcButtonClick(e.key);
+    });
   }
 
   componentDidUpdate() {
@@ -211,13 +216,6 @@ class Calculator extends Component {
     });
   }
 
-  clearInput() {
-    if (this.state.error) {
-      return this.ClearAll();
-    }
-    this.setState({ operation: "", solution: false, error: false });
-  }
-
   clearEntry() {
     this.setState((state) => {
       if (state.error) {
@@ -267,12 +265,11 @@ class Calculator extends Component {
 
   onCalcButtonClick(value) {
     switch (value) {
+      case "c":
       case ENTRIES.ACTIONS.CLEAR_ENTRY:
         this.clearEntry();
         break;
-      case ENTRIES.ACTIONS.CLEAR:
-        this.clearInput();
-        break;
+      case "a":
       case ENTRIES.ACTIONS.ALL_CLEAR:
         this.ClearAll();
         break;
@@ -303,6 +300,7 @@ class Calculator extends Component {
       case ENTRIES.NUMBERS.NINE:
         this.addEntry(value);
         break;
+      case "Enter":
       case ENTRIES.EQUAL:
         this.evaluate();
         break;
@@ -312,8 +310,11 @@ class Calculator extends Component {
   render() {
     const numButtons = [];
     for (const numKey in ENTRIES.NUMBERS) {
+      if (ENTRIES.NUMBERS[numKey] === ENTRIES.NUMBERS.ZERO) {
+        continue;
+      }
       numButtons.push(
-        <div key={numKey} className="col-4">
+        <div key={numKey} className="col">
           <CalcButton
             id={numKey.toLowerCase()}
             text={ENTRIES.NUMBERS[numKey]}
@@ -333,83 +334,124 @@ class Calculator extends Component {
               error={this.state.error}
             />
           </div>
-          <div className="col-4">
-            <CalcButton
-              id="clear-entry"
-              text={ENTRIES.ACTIONS.CLEAR_ENTRY}
-              onClick={this.onCalcButtonClick}
-            />
+          <div
+            className={
+              "container p-0 " +
+              (window.innerHeight > window.innerWidth ? "col-12" : "col-7")
+            }
+          >
+            <div className="row row-cols-2 m-0 g-2 p-0">
+              <div className="col">
+                <CalcButton
+                  id="clear-entry"
+                  text={ENTRIES.ACTIONS.CLEAR_ENTRY}
+                  onClick={this.onCalcButtonClick}
+                />
+              </div>
+              <div className="col">
+                <CalcButton
+                  id="clear"
+                  text={ENTRIES.ACTIONS.ALL_CLEAR}
+                  onClick={this.onCalcButtonClick}
+                />
+              </div>
+            </div>
+            <div className="row row-cols-4 m-0 g-2 p-0">
+              <div className="col">
+                <CalcButton
+                  id="add"
+                  text={ENTRIES.OPERATORS.ADD}
+                  onClick={this.onCalcButtonClick}
+                />
+              </div>
+              <div className="col">
+                <CalcButton
+                  id="subtract"
+                  text={ENTRIES.OPERATORS.SUBTRACT}
+                  onClick={this.onCalcButtonClick}
+                />
+              </div>
+              <div className="col">
+                <CalcButton
+                  id="multiply"
+                  text={ENTRIES.OPERATORS.MULTIPLY}
+                  onClick={this.onCalcButtonClick}
+                />
+              </div>
+              <div className="col">
+                <CalcButton
+                  id="divide"
+                  text={ENTRIES.OPERATORS.DIVIDE}
+                  onClick={this.onCalcButtonClick}
+                />
+              </div>
+            </div>
+            <div className="row row-cols-3 m-0 g-2 p-0">
+              <div className="col">
+                <CalcButton
+                  id="parentheses-start"
+                  text={ENTRIES.PARENTHESES.START}
+                  onClick={this.onCalcButtonClick}
+                />
+              </div>
+              <div className="col">
+                <CalcButton
+                  id="parentheses-end"
+                  text={ENTRIES.PARENTHESES.END}
+                  onClick={this.onCalcButtonClick}
+                />
+              </div>
+              <div className="col">
+                <CalcButton
+                  id="decimal"
+                  text={ENTRIES.DECIMAL_POINT}
+                  onClick={this.onCalcButtonClick}
+                />
+              </div>
+            </div>
           </div>
-          <div className="col-4">
-            <CalcButton
-              id="clear-input"
-              text={ENTRIES.ACTIONS.CLEAR}
-              onClick={this.onCalcButtonClick}
-            />
+          <div
+            className={
+              "container p-0 " +
+              (window.innerHeight > window.innerWidth ? "col-12" : "col-5")
+            }
+          >
+            <div className="row row-cols-3 m-0 g-2 p-0">{numButtons}</div>
           </div>
-          <div className="col-4">
-            <CalcButton
-              id="clear"
-              text={ENTRIES.ACTIONS.ALL_CLEAR}
-              onClick={this.onCalcButtonClick}
-            />
-          </div>
-          <div className="col-3">
-            <CalcButton
-              id="add"
-              text={ENTRIES.OPERATORS.ADD}
-              onClick={this.onCalcButtonClick}
-            />
-          </div>
-          <div className="col-3">
-            <CalcButton
-              id="subtract"
-              text={ENTRIES.OPERATORS.SUBTRACT}
-              onClick={this.onCalcButtonClick}
-            />
-          </div>
-          <div className="col-3">
-            <CalcButton
-              id="multiply"
-              text={ENTRIES.OPERATORS.MULTIPLY}
-              onClick={this.onCalcButtonClick}
-            />
-          </div>
-          <div className="col-3">
-            <CalcButton
-              id="divide"
-              text={ENTRIES.OPERATORS.DIVIDE}
-              onClick={this.onCalcButtonClick}
-            />
-          </div>
-          <div className="col-4">
-            <CalcButton
-              id="parentheses-start"
-              text={ENTRIES.PARENTHESES.START}
-              onClick={this.onCalcButtonClick}
-            />
-          </div>
-          <div className="col-4">
-            <CalcButton
-              id="parentheses-end"
-              text={ENTRIES.PARENTHESES.END}
-              onClick={this.onCalcButtonClick}
-            />
-          </div>
-          <div className="col-4">
-            <CalcButton
-              id="decimal"
-              text={ENTRIES.DECIMAL_POINT}
-              onClick={this.onCalcButtonClick}
-            />
-          </div>
-          {numButtons}
-          <div className="col-8">
-            <CalcButton
-              id="equals"
-              text={ENTRIES.EQUAL}
-              onClick={this.onCalcButtonClick}
-            />
+          <div className="container p-0 col-12">
+            <div
+              className={
+                "row m-0 g-2 p-0 d-flex " +
+                (window.innerWidth > window.innerHeight
+                  ? "flex-row-reverse"
+                  : "")
+              }
+            >
+              <div
+                className={
+                  "" +
+                  (window.innerHeight > window.innerWidth ? "col-4" : "col-5")
+                }
+              >
+                <CalcButton
+                  id="zero"
+                  text={ENTRIES.NUMBERS.ZERO}
+                  onClick={this.onCalcButtonClick}
+                />
+              </div>
+              <div
+                className={
+                  "" +
+                  (window.innerHeight > window.innerWidth ? "col-8" : "col-7")
+                }
+              >
+                <CalcButton
+                  id="equals"
+                  text={ENTRIES.EQUAL}
+                  onClick={this.onCalcButtonClick}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </Fragment>

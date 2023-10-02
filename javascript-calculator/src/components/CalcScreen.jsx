@@ -8,9 +8,21 @@ class CalcScreen extends Component {
         <div
           className={this.props.error ? " text-danger" : " text-secondary"}
           style={{
-            minHeight: "2rem",
-            fontSize: "1.2rem",
-            lineHeight: "1.2rem",
+            height:
+              "" +
+              window.innerHeight /
+                (window.innerHeight > window.innerWidth ? 16 : 12) +
+              "px",
+            fontSize:
+              "" +
+              window.innerHeight /
+                (window.innerHeight > window.innerWidth ? 24 : 18) +
+              "px",
+            lineHeight:
+              "" +
+              window.innerHeight /
+                (window.innerHeight > window.innerWidth ? 24 : 18) +
+              "px",
             opacity: this.props.error ? "0.5" : "1",
           }}
         >
@@ -24,9 +36,21 @@ class CalcScreen extends Component {
             (this.props.error ? " text-danger" : " text-light")
           }
           style={{
-            minHeight: "3rem",
-            fontSize: "2rem",
-            lineHeight: "2rem",
+            height:
+              "" +
+              window.innerHeight /
+                (window.innerHeight > window.innerWidth ? 12 : 9) +
+              "px",
+            fontSize:
+              "" +
+              window.innerHeight /
+                (window.innerHeight > window.innerWidth ? 18 : 12) +
+              "px",
+            lineHeight:
+              "" +
+              window.innerHeight /
+                (window.innerHeight > window.innerWidth ? 18 : 12) +
+              "px",
           }}
         >
           <span id="display" className="text-wrap text-break">
