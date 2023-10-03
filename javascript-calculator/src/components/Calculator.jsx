@@ -93,10 +93,28 @@ class Calculator extends Component {
 
   evaluate() {
     this.setState((state) => {
+      // Do not deal with empty operation
       if (state.lastOps.length > 0) {
-        const op = /[^*/+-]/.test(state.lastOps[state.lastOps.length - 1])
+        // Ignore any operator at the end
+        let op = /[^*/+-]/.test(state.lastOps[state.lastOps.length - 1])
           ? state.lastOps
           : state.lastOps.slice(0, state.lastOps.length - 1);
+        // If solution, repeat last operation on the current result
+        if (state.solution && /=\d+$/.test(op)) {
+          const result = op.slice(op.lastIndexOf("=") + 1); // Extract the result
+          if (result.length > 0) {
+            // Truncate the last part that start with '='
+            op = op.slice(0, op.lastIndexOf("="));
+            // Match any operator with its right operand, then take last match only
+            const [lastOperation] = op.match(
+              /[*/+-]-?((\d+)|(\d+\.\d+))$/g
+            ) ?? [""];
+            if (lastOperation.length > 0) {
+              // Repeat the last operator (with its right operand) on current result
+              op = "" + result + lastOperation;
+            }
+          }
+        }
         let solution;
         try {
           solution = eval?.(op);
@@ -120,7 +138,7 @@ class Calculator extends Component {
             }
           }
           return {
-            lastOps: state.lastOps + "=" + solution,
+            lastOps: (state.solution ? op : state.lastOps) + "=" + solution,
             operation: solution,
             solution: true,
             error: false,
@@ -197,14 +215,13 @@ class Calculator extends Component {
   }
 
   enterZero() {
-    this.setState((state) => {
-      if (state.operation.length > 0) {
-        return {
-          lastOps: state.lastOps + "0",
-          operation: state.operation + "0",
-        };
-      }
-    });
+    if (
+      this.state.operation === "" ||
+      this.state.operation.length > 1 ||
+      (this.state.operation.length === 1 && this.state.operation !== "0")
+    ) {
+      this.addEntry("0");
+    }
   }
 
   ClearAll() {
