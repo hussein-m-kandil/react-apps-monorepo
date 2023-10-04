@@ -1,4 +1,4 @@
-import { Component, Fragment, createRef } from "react";
+import { Component, createRef } from "react";
 import Time from "./Time";
 import Timer from "./Timer";
 
@@ -12,6 +12,7 @@ class TwentyFivePlusFiveClock extends Component {
     this.defaultSessionTime = 25;
     this.currentCounter = null;
     this.beepRef = createRef();
+    this.clockRef = createRef();
     // State
     this.state = {
       break: this.defaultBreakTime,
@@ -30,6 +31,7 @@ class TwentyFivePlusFiveClock extends Component {
     this.toggleTimer = this.toggleTimer.bind(this);
     this.countDown = this.countDown.bind(this);
     this.stopBeepAudio = this.stopBeepAudio.bind(this);
+    this.setClockPaddingTop = this.setClockPaddingTop.bind(this);
   }
 
   increment(id) {
@@ -63,11 +65,10 @@ class TwentyFivePlusFiveClock extends Component {
   }
 
   setMinutes(id) {
-    if (
-      (this.state.isSessionTime && id === this.sessionId) ||
-      (!this.state.isSessionTime && id === this.breakId)
-    ) {
+    if (this.state.isSessionTime && id === this.sessionId) {
       this.setState((state) => ({ minutes: state.session, seconds: 0 }));
+    } else if (!this.state.isSessionTime && id === this.breakId) {
+      this.setState((state) => ({ minutes: state.break, seconds: 0 }));
     }
   }
 
@@ -148,6 +149,14 @@ class TwentyFivePlusFiveClock extends Component {
     }
   }
 
+  setClockPaddingTop() {
+    const clockHeight = this.clockRef.current?.offsetHeight ?? 0;
+    if (clockHeight > 0) {
+      const paddingTop = Math.ceil((window.innerHeight - clockHeight) / 2);
+      this.clockRef.current.style.paddingTop = "" + paddingTop + "px";
+    }
+  }
+
   componentDidUpdate() {
     // If Time is up, Rewind the beep audio and play it.
     if (this.state.isTimeUp && this.beepRef.current) {
@@ -156,16 +165,38 @@ class TwentyFivePlusFiveClock extends Component {
   }
 
   componentDidMount() {
-    this.beepRef.current?.addEventListener(
-      "ended",
-      (e) => (e.target.currentTime = 0)
+    // Add event lister that rewind the beep audio at the end of playing
+    if (this.beepRef.current) {
+      this.beepRef.current.addEventListener(
+        "ended",
+        (e) => (e.target.currentTime = 0)
+      );
+      this.beepRef.current.volume = 1.0;
+    }
+    // Add event lister to set the clock's top padding,
+    // on window resize & orientation change
+    window.addEventListener("resize", () => this.setClockPaddingTop());
+    screen.orientation.addEventListener("change", () =>
+      this.setClockPaddingTop()
     );
+    // Set clock's top padding
+    this.setClockPaddingTop();
   }
 
   render() {
     return (
-      <Fragment>
-        <div className="d-flex justify-content-around">
+      <div
+        ref={this.clockRef}
+        className={"row m-0 mx-auto" + " col-10 col-md-8 col-xl-6"}
+        style={{ padding: "1rem 0" }}
+      >
+        <div
+          className="my-2 mb-sm-5 text-center text-dark"
+          style={{ fontSize: "xxx-large" }}
+        >
+          25 + 5 Clock
+        </div>
+        <div className="d-flex justify-content-between">
           <Time
             id={this.breakId}
             label="Break Length"
@@ -185,6 +216,7 @@ class TwentyFivePlusFiveClock extends Component {
           label={this.state.isSessionTime ? this.sessionId : this.breakId}
           minutes={this.state.minutes}
           seconds={this.state.seconds}
+          startAndStopText={this.currentCounter ? "Stop" : "Start"}
           onToggleTimer={this.toggleTimer}
           onResetClock={this.resetClock}
         />
@@ -195,7 +227,7 @@ class TwentyFivePlusFiveClock extends Component {
           preload="auto"
           crossOrigin="anonymous"
         />
-      </Fragment>
+      </div>
     );
   }
 }
