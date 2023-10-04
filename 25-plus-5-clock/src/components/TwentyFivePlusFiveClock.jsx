@@ -171,14 +171,15 @@ class TwentyFivePlusFiveClock extends Component {
         "ended",
         (e) => (e.target.currentTime = 0)
       );
+      // Set volume
       this.beepRef.current.volume = 1.0;
+      // Set playback rate
+      this.beepRef.current.playbackRate = 2;
     }
     // Add event lister to set the clock's top padding,
     // on window resize & orientation change
-    window.addEventListener("resize", () => this.setClockPaddingTop());
-    screen.orientation.addEventListener("change", () =>
-      this.setClockPaddingTop()
-    );
+    window.addEventListener("resize", this.setClockPaddingTop);
+    screen.orientation.addEventListener("change", this.setClockPaddingTop);
     // Set clock's top padding
     this.setClockPaddingTop();
   }
@@ -191,7 +192,7 @@ class TwentyFivePlusFiveClock extends Component {
         style={{ padding: "1rem 0" }}
       >
         <div
-          className="my-2 mb-sm-5 text-center text-dark"
+          className="my-2 mb-sm-3 text-center text-dark"
           style={{ fontSize: "xxx-large" }}
         >
           25 + 5 Clock
@@ -223,7 +224,9 @@ class TwentyFivePlusFiveClock extends Component {
         <audio
           id="beep"
           ref={this.beepRef}
-          src="https://cdn.pixabay.com/audio/2022/03/15/audio_9b025c02ff.mp3"
+          // src="https://cdn.pixabay.com/audio/2022/03/15/audio_9b025c02ff.mp3"
+          // src="https://cdn.pixabay.com/audio/2021/08/04/audio_c668156e64.mp3"
+          src="./alarm-clock-beep.mp3"
           preload="auto"
           crossOrigin="anonymous"
         />
