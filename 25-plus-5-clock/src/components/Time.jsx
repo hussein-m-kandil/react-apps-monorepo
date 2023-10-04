@@ -11,17 +11,19 @@ class Time extends Component {
         <div id={this.props.id + "-value"} className="text-center">
           <button
             type="button"
-            id="break-decrement"
+            id={this.props.id + "-decrement"}
             onClick={() => this.props.onDecrement()}
           >
             -
           </button>
-          <span id={this.props.id + "-length"}>
-            <strong>&nbsp;{this.props.value}&nbsp;</strong>
+          <span className="fw-bold">
+            &nbsp;
+            <span id={this.props.id + "-length"}>{this.props.value}</span>
+            &nbsp;
           </span>
           <button
             type="button"
-            id="break-increment"
+            id={this.props.id + "-increment"}
             onClick={() => this.props.onIncrement()}
           >
             +

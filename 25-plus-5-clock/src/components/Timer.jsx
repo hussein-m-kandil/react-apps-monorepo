@@ -8,18 +8,16 @@ class Timer extends Component {
         <label id="timer-label">
           {this.props.label[0].toUpperCase() + this.props.label.slice(1)}
         </label>
-        <div id="time-left">
-          <strong>
-            {(this.props.minutes < 10 ? "0" : "") +
-              this.props.minutes +
-              ":" +
-              (this.props.seconds < 10 ? "0" : "") +
-              this.props.seconds}
-          </strong>
+        <div id="time-left" className="fw-bold">
+          {(this.props.minutes < 10 ? "0" : "") +
+            this.props.minutes +
+            ":" +
+            (this.props.seconds < 10 ? "0" : "") +
+            this.props.seconds}
         </div>
         <button
           type="button"
-          id="start-stop"
+          id="start_stop"
           onClick={() => this.props.onToggleTimer()}
         >
           Start/Stop

@@ -1,4 +1,4 @@
-import { Component, Fragment } from "react";
+import { Component, Fragment, createRef } from "react";
 import Time from "./Time";
 import Timer from "./Timer";
 
@@ -11,6 +11,7 @@ class TwentyFivePlusFiveClock extends Component {
     this.defaultBreakTime = 5;
     this.defaultSessionTime = 25;
     this.currentCounter = null;
+    this.beepRef = createRef();
     // State
     this.state = {
       break: this.defaultBreakTime,
@@ -28,6 +29,7 @@ class TwentyFivePlusFiveClock extends Component {
     this.resetClock = this.resetClock.bind(this);
     this.toggleTimer = this.toggleTimer.bind(this);
     this.countDown = this.countDown.bind(this);
+    this.stopBeepAudio = this.stopBeepAudio.bind(this);
   }
 
   increment(id) {
@@ -70,23 +72,36 @@ class TwentyFivePlusFiveClock extends Component {
   }
 
   resetClock() {
-    this.toggleTimer();
+    // Clear counter interval
+    if (this.currentCounter) {
+      clearInterval(this.currentCounter);
+      this.currentCounter = null;
+    }
+    // Rewind the beep audio
+    this.stopBeepAudio();
+    // Reset the state
     this.setState({
       break: this.defaultBreakTime,
       session: this.defaultSessionTime,
       isSessionTime: true,
+      timerIsOn: false,
       minutes: this.defaultSessionTime,
       seconds: 0,
+      isTimeUp: false,
     });
   }
 
   toggleTimer() {
+    // If there is a counter interval, then, clear it and stop beep audio,
+    // Otherwise, start countdown
     if (this.currentCounter) {
       clearInterval(this.currentCounter);
       this.currentCounter = null;
+      this.stopBeepAudio();
     } else {
       this.countDown();
     }
+    // reset
     this.setState((state) => ({ timerIsOn: !state.timerIsOn }));
   }
 
@@ -97,13 +112,19 @@ class TwentyFivePlusFiveClock extends Component {
           seconds,
           isTimeUp = false;
         if (state.isTimeUp) {
-          minutes = state.isSessionTime ? state.session : state.break;
+          // The flag (isSessionTime) changes with the first round of the time,
+          // which means it is still indicating to the last time (which is up now)
+          // So, if it is "session" time, that means, we was in session time
+          // and hence we need to start "break" time (the opposite) now.
+          minutes = state.isSessionTime ? state.break : state.session;
           seconds = 0;
         } else {
           minutes = state.minutes;
           seconds = state.seconds;
         }
-        const newSeconds = !state.isTimeUp ? (seconds + 59) % 60 : seconds;
+        const newSeconds = state.isTimeUp ? seconds : (seconds + 59) % 60;
+        // If isTimeUp, then newSeconds is '0' (Zero),
+        // So new time's minutes present unchanged for 1 second (till the next time).
         const newMinutes = newSeconds < 59 ? minutes : minutes - 1;
         if (newMinutes === 0 && newSeconds === 0) {
           isTimeUp = true;
@@ -118,6 +139,27 @@ class TwentyFivePlusFiveClock extends Component {
         };
       });
     }, 1000);
+  }
+
+  stopBeepAudio() {
+    if (this.beepRef.current) {
+      this.beepRef.current.pause();
+      this.beepRef.current.currentTime = 0.0;
+    }
+  }
+
+  componentDidUpdate() {
+    // If Time is up, Rewind the beep audio and play it.
+    if (this.state.isTimeUp && this.beepRef.current) {
+      this.beepRef.current.play();
+    }
+  }
+
+  componentDidMount() {
+    this.beepRef.current?.addEventListener(
+      "ended",
+      (e) => (e.target.currentTime = 0)
+    );
   }
 
   render() {
@@ -145,6 +187,13 @@ class TwentyFivePlusFiveClock extends Component {
           seconds={this.state.seconds}
           onToggleTimer={this.toggleTimer}
           onResetClock={this.resetClock}
+        />
+        <audio
+          id="beep"
+          ref={this.beepRef}
+          src="https://cdn.pixabay.com/audio/2022/03/15/audio_9b025c02ff.mp3"
+          preload="auto"
+          crossOrigin="anonymous"
         />
       </Fragment>
     );
