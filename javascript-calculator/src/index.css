@@ -19,6 +19,6 @@ body {
   min-height: 100vh;
 }
 
-.btn:focus {
+.btn:enabled {
   background-color: var(--bs-dark);
 }
