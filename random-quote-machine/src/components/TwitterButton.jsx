@@ -29,6 +29,9 @@ export class TwitterButton extends Component {
         }}
         onMouseOver={() => (this.tweetBtn.current.style.opacity = 0.75)}
         onMouseLeave={() => (this.tweetBtn.current.style.opacity = 1)}
+        onFocus={() =>
+          setTimeout(() => (this.tweetBtn.current.style.opacity = 1), 1000)
+        }
         style={{
           transition: "background-color 3s, border-color 3s",
           backgroundColor: this.props.color,
