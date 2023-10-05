@@ -17,8 +17,34 @@ body {
   font-family: monospace, sans-serif;
 }
 
+.btn {
+  transition: scale 100ms, color 500ms, background-color 500ms;
+}
+
+.btn:hover {
+  scale: 1.025;
+}
+
+.btn:active {
+  animation: scaleDown 100ms;
+}
+
 /* Revert button's color back after release (on mobile) */
 .btn:enabled {
-  background-color: var(--bs-light);
-  color: var(--bs-dark);
+  background-color: var(--bs-btn-bg);
+  color: var(--bs-btn-color);
+}
+
+@keyframes scaleDown {
+  0% {
+    scale: 1;
+  }
+
+  50% {
+    scale: 0.95;
+  }
+
+  100% {
+    scale: 1;
+  }
 }
