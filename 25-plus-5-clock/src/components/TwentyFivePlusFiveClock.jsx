@@ -154,6 +154,8 @@ class TwentyFivePlusFiveClock extends Component {
     if (clockHeight > 0) {
       const paddingTop = Math.ceil((window.innerHeight - clockHeight) / 2);
       this.clockRef.current.style.paddingTop = "" + paddingTop + "px";
+    } else {
+      this.clockRef.current?.classList.add("pt-4");
     }
   }
 
@@ -192,7 +194,7 @@ class TwentyFivePlusFiveClock extends Component {
         style={{ padding: "1rem 0" }}
       >
         <div
-          className="my-2 mb-sm-3 text-center text-dark"
+          className="mb-2 mb-sm-3 text-center text-dark fw-bold"
           style={{ fontSize: "xxx-large" }}
         >
           25 + 5 Clock
@@ -224,7 +226,6 @@ class TwentyFivePlusFiveClock extends Component {
         <audio
           id="beep"
           ref={this.beepRef}
-          // src="https://cdn.pixabay.com/audio/2022/03/15/audio_9b025c02ff.mp3"
           // src="https://cdn.pixabay.com/audio/2021/08/04/audio_c668156e64.mp3"
           src="./alarm-clock-beep.mp3"
           preload="auto"

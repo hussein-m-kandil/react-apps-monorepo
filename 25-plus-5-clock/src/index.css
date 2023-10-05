@@ -16,3 +16,8 @@ body {
   padding: 0;
   font-family: monospace, sans-serif;
 }
+
+.btn:enabled {
+  background-color: var(--bs-light);
+  color: var(--bs-dark);
+}
