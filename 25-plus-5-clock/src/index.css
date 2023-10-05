@@ -17,6 +17,7 @@ body {
   font-family: monospace, sans-serif;
 }
 
+/* Revert button's color back after release (on mobile) */
 .btn:enabled {
   background-color: var(--bs-light);
   color: var(--bs-dark);
