@@ -19,6 +19,32 @@ body {
   min-height: 100vh;
 }
 
+.btn {
+  transition: scale 100ms;
+}
+
+.btn:hover {
+  scale: 1.025;
+}
+
+.btn:active {
+  animation: scaleDown 100ms;
+}
+
 .btn:enabled {
-  background-color: var(--bs-dark);
+  background-color: var(--bs-btn-bg);
+}
+
+@keyframes scaleDown {
+  0% {
+    scale: 1;
+  }
+
+  50% {
+    scale: 0.95;
+  }
+
+  100% {
+    scale: 1;
+  }
 }
