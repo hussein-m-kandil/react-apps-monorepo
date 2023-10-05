@@ -23,3 +23,7 @@ h1 {
 #drum-machine {
   background-color: rgb(50, 70, 90) !important;
 }
+
+.btn:enabled {
+  background-color: var(--bs-dark);
+}
