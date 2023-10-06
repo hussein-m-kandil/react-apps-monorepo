@@ -7,7 +7,7 @@ In these 5 apps i practiced what i learned within the FreeCodeCamp courses; fron
 Although i have learned about React function components and hooks from other learning resources, in these 5 apps i used React class components instead. I did so for 2 reasons:
 
 1. The FreeCodeCamp's course material is based on class components, so i preferred to stick with what they taught me.
-2. I know that i will continue my React journey using function components and hooks, but my React journey has not started yet (it is about to start), so why not play with classes now and explore places that i may never touch again! "i enjoy the journey".
+2. I know that i will continue my React journey using function components and hooks, but my React journey has not started yet (it's about to start), so why not play with class components now and explore places that i may never touch again! ― enjoy the journey.
 
 ## Links to the apps
 
