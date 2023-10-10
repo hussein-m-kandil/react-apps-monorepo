@@ -30,6 +30,7 @@ class TwentyFivePlusFiveClock extends Component {
     this.resetClock = this.resetClock.bind(this);
     this.toggleTimer = this.toggleTimer.bind(this);
     this.countDown = this.countDown.bind(this);
+    this.playBeepJSAudioAsync = this.playBeepJSAudioAsync.bind(this);
     this.stopBeepAudio = this.stopBeepAudio.bind(this);
     this.setClockPaddingTop = this.setClockPaddingTop.bind(this);
   }
@@ -142,10 +143,30 @@ class TwentyFivePlusFiveClock extends Component {
     }, 1000);
   }
 
+  async playBeepJSAudioAsync() {
+    const beep = new Audio("./alarm-clock-beep.mp3");
+    beep.load();
+    // Add event lister that rewind the beep audio at the end of playing
+    beep.addEventListener("ended", (e) => (e.target.currentTime = 0));
+    // Set volume
+    beep.volume = 1.0;
+    // Set playback rate
+    beep.playbackRate = 2;
+    beep.play();
+    return beep;
+  }
+
   stopBeepAudio() {
-    if (this.beepRef.current) {
-      this.beepRef.current.pause();
-      this.beepRef.current.currentTime = 0.0;
+    if (this.beep) {
+      if (this.beep.currentTime > 0.0) {
+        this.beep.pause();
+        this.beep.currentTime = 0.0;
+      }
+    } else if (this.beepRef.current) {
+      if (this.beepRef.current.currentTime > 0.0) {
+        this.beepRef.current.pause();
+        this.beepRef.current.currentTime = 0.0;
+      }
     }
   }
 
@@ -161,8 +182,25 @@ class TwentyFivePlusFiveClock extends Component {
 
   componentDidUpdate() {
     // If Time is up, Rewind the beep audio and play it.
-    if (this.state.isTimeUp && this.beepRef.current) {
-      this.beepRef.current.play();
+    if (this.state.isTimeUp) {
+      document.defaultView.focus();
+      /*
+       * Use the audio API and fallback to HTML5 audio element.
+       * I am trying to play audio asynchronously (as a microtask) in order to:
+       * * Enforce the browser to play the audio even if the page is not in the current active tab,
+       * * Or
+       * * There is another audio is playing.
+       */
+      if (Audio) {
+        this.playBeepJSAudioAsync()
+          .then((beepObj) => (this.beep = beepObj))
+          .catch((e) => console.log(`${e.name}: ${e.message}`));
+      } else if (this.beepRef.current) {
+        console.log("Not Audio API!");
+        (async () => this.beepRef.current.play())().catch((e) =>
+          console.log(`${e.name}: ${e.message}`)
+        );
+      }
     }
   }
 
@@ -226,10 +264,10 @@ class TwentyFivePlusFiveClock extends Component {
         <audio
           id="beep"
           ref={this.beepRef}
-          // src="https://cdn.pixabay.com/audio/2021/08/04/audio_c668156e64.mp3"
-          src="./alarm-clock-beep.mp3"
           preload="auto"
-          crossOrigin="anonymous"
+          src="./alarm-clock-beep.mp3"
+          // src="https://cdn.pixabay.com/audio/2021/08/04/audio_c668156e64.mp3"
+          // crossOrigin="anonymous"
         />
       </div>
     );
