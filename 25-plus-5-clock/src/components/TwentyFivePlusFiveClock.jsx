@@ -229,15 +229,15 @@ class TwentyFivePlusFiveClock extends Component {
       <div
         ref={this.clockRef}
         className={"row m-0 mx-auto" + " col-10 col-md-8 col-xl-6"}
-        style={{ padding: "1rem 0" }}
+        style={{ padding: "1rem 0 auto 0" }}
       >
-        <div
-          className="mb-2 mb-sm-3 text-center text-dark fw-bold"
-          style={{ fontSize: "xxx-large" }}
+        <h1
+          className="mb-3 text-center text-dark"
+          style={{ fontSize: "2.5rem" }}
         >
           25 + 5 Clock
-        </div>
-        <div className="d-flex justify-content-between">
+        </h1>
+        <div className="mt-3 d-flex justify-content-between">
           <Time
             id={this.breakId}
             label="Break Length"

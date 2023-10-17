@@ -10,9 +10,9 @@ class Time extends Component {
       >
         <div
           id={this.props.id + "-label"}
-          className="text-center"
-          style={{ fontSize: "larger" }}
+          className="text-center mb-2"
           role="label"
+          style={{ fontSize: "0.85rem" }}
         >
           {this.props.label}
         </div>
@@ -25,15 +25,11 @@ class Time extends Component {
             type="button"
             id={this.props.id + "-decrement"}
             className="btn btn-outline-dark rounded-circle p-0 px-2"
-            style={{ fontSize: "larger" }}
             onClick={() => this.props.onDecrement()}
           >
             -
           </button>
-          <span
-            className="fw-bold align-middle"
-            style={{ fontSize: "x-large" }}
-          >
+          <span className="fw-bold align-middle">
             &nbsp;
             <span id={this.props.id + "-length"}>{this.props.value}</span>
             &nbsp;
@@ -42,7 +38,6 @@ class Time extends Component {
             type="button"
             id={this.props.id + "-increment"}
             className="btn btn-outline-dark rounded-circle p-0 px-2"
-            style={{ fontSize: "larger" }}
             onClick={() => this.props.onIncrement()}
           >
             +

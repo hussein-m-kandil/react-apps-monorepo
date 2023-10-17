@@ -48,3 +48,9 @@ body {
     scale: 1;
   }
 }
+
+@media screen and (min-width: 690px) {
+  :root {
+    font-size: 1.25rem;
+  }
+}
