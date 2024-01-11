@@ -16,5 +16,3 @@ Although i have learned about React function components and hooks from other lea
 3. [Drum Machine](https://hussein-m-kandil.github.io/react-apps-monorepo/drum-machine/dist/index.html)
 4. [JavaScript Calculator](https://hussein-m-kandil.github.io/react-apps-monorepo/javascript-calculator/dist/index.html)
 5. [25 + 5 Clock](https://hussein-m-kandil.github.io/react-apps-monorepo/25-plus-5-clock/dist/index.html)
-
-Special thanks to @freeCodeCamp
